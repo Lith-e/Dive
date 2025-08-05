@@ -302,6 +302,7 @@
             font-size: 1.25rem;
             cursor: pointer;
             transition: all 0.3s ease;
+            overflow: hidden;
         }
         
         .profile-circle:hover {
@@ -312,7 +313,16 @@
             background-color: var(--charcoal-700);
         }
         
-        /* Financial Goals Section */
+        .profile-circle img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        
+        .profile-circle i {
+            font-size: 1.25rem;
+        }
+        
         .financial-goals {
             cursor: pointer;
             transition: transform 0.3s ease;
@@ -360,7 +370,6 @@
             width: 65%;
         }
         
-        /* Task Views */
         .task-view {
             display: none;
         }
@@ -448,7 +457,6 @@
             z-index: -1;
         }
         
-        /* Custom Timer Input */
         .custom-timer {
             display: flex;
             align-items: center;
@@ -477,7 +485,6 @@
             box-shadow: 0 0 0 2px rgba(138, 155, 104, 0.3);
         }
         
-        /* Financial Modal */
         .modal {
             display: none;
             position: fixed;
@@ -716,7 +723,7 @@
         
         .delete-goal {
             cursor: pointer;
-            color: var(--cream-400);
+            color: var(--coral);
             margin-left: 8px;
             transition: all 0.2s ease;
         }
@@ -1222,18 +1229,33 @@
             gap: 8px;
         }
 
-        /* New task styles */
-        .task-note {
-            background-color: var(--cream-100);
-            border-radius: 12px;
+       .task-note {
+            background: linear-gradient(145deg, #fef3c7, #fde68a); /* sticky yellow */
+            border-radius: 6px 20px 6px 20px;
             padding: 15px;
             margin-bottom: 15px;
             position: relative;
-            box-shadow: 0 3px 8px rgba(0,0,0,0.05);
-            border: 1px solid var(--cream-200);
+            box-shadow: 4px 6px 8px rgba(0,0,0,0.1);
+            font-family: 'Playfair Display', serif;
+            border: 2px dashed #d97706;
+            transform: rotate(-1deg);
             transition: all 0.3s ease;
-        }
-        
+        } 
+        .task-note::after {
+            content: '';
+            position: absolute;
+            bottom: -8px;
+            left: 0;
+            width: 100%;
+            height: 10px;
+            background: radial-gradient(circle at 10% 40%, #fef3c7 15%, transparent 16%),
+                        radial-gradient(circle at 30% 60%, #fef3c7 15%, transparent 16%),
+                        radial-gradient(circle at 50% 40%, #fef3c7 15%, transparent 16%),
+                        radial-gradient(circle at 70% 60%, #fef3c7 15%, transparent 16%),
+                        radial-gradient(circle at 90% 40%, #fef3c7 15%, transparent 16%);
+            background-size: 20px 20px;
+            background-repeat: repeat-x;
+        }   
         .task-note:hover {
             transform: translateY(-3px);
             box-shadow: 0 5px 15px rgba(0,0,0,0.08);
@@ -1323,6 +1345,22 @@
             background: var(--cream-50);
             width: 80px;
         }
+        .reminder-bell {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            color: #d97706;
+            animation: ring 1s ease-in-out infinite;
+        }
+
+       @keyframes ring {
+           0% { transform: rotate(0); }
+           25% { transform: rotate(2deg); }
+           50% { transform: rotate(-2deg); }
+           75% { transform: rotate(2deg); }
+           100% { transform: rotate(0); }
+        }
+
         
         body.dark-mode .task-note {
             background-color: var(--charcoal-900);
@@ -1577,16 +1615,18 @@
                 <i class="fas fa-water coral-icon"></i>
                 <div class="app-name">Lithe</div>
             </div>
-            
+
             <div class="datetime-container">
                 <div class="current-time" id="currentTime">10:30 AM</div>
                 <div class="current-date" id="currentDate">Monday, August 5, 2025</div>
             </div>
-            
-            <div class="profile-circle" id="profileCircle">U</div>
+
+            <a href="profile.html" class="profile-circle" id="profileCircle">
+                <i class="fas fa-user"></i>
+            </a>
         </div>
     </header>
-    
+
     <main class="max-w-6xl mx-auto px-4 py-6">
         <section id="iSection" class="section active-section">
             <div class="flex justify-between items-center mb-6">
@@ -1887,7 +1927,8 @@
                 sleep: 7,
                 weight: 65,
                 walk: 3.5
-            }
+            },
+            profileImage: null
         };
         
         // Financial data
@@ -1961,6 +2002,19 @@
             
             // Check for reminders every minute
             setInterval(checkReminders, 60000);
+            
+            // Load profile image
+            loadProfileImage();
+        }
+        
+        // Load profile image
+        function loadProfileImage() {
+            const profileCircle = document.getElementById('profileCircle');
+            if (state.profileImage) {
+                profileCircle.innerHTML = `<img src="${state.profileImage}" alt="Profile" id="profileImage">`;
+            } else {
+                profileCircle.innerHTML = '<i class="fas fa-user"></i>';
+            }
         }
         
         // Save all app data to localStorage
@@ -2835,7 +2889,6 @@
                         preview.src = e.target.result;
                         preview.style.display = 'block';
                         
-                        // Hide the upload icon and text
                         const icon = document.querySelector('#photoUpload .fa-cloud-upload-alt');
                         const text = document.querySelector('#photoUpload p');
                         if (icon) icon.style.display = 'none';
@@ -2878,7 +2931,6 @@
             });
         }
 
-        // Dark Mode Toggle
         const themeToggle = document.getElementById('themeToggle');
         const themeIcon = document.getElementById('themeIcon');
         
@@ -2948,7 +3000,6 @@
             });
         });
         
-        // Set custom timer
         document.getElementById('setCustomTimer').addEventListener('click', function() {
             const minutes = parseInt(document.getElementById('customMinutes').value);
             if (!isNaN(minutes) && minutes > 0) {
@@ -2959,7 +3010,6 @@
 
         updateTimerDisplay();
         
-        // Financial goals modal
         document.getElementById('financialGoals').addEventListener('click', function() {
             document.getElementById('financialModal').style.display = 'flex';
         });
@@ -2968,7 +3018,6 @@
             document.getElementById('financialModal').style.display = 'none';
         });
         
-        // Habit Dashboard Initialization
         function initHabitDashboard() {
             // Set up habit adding
             document.getElementById('addHabitBtn').addEventListener('click', addNewHabit);
