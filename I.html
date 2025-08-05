@@ -1,0 +1,3169 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lithe - Mindful Productivity</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.5.1/dist/confetti.browser.min.js"></script>
+    <style>
+        :root {
+            --cream-50: #FAF9F5;
+            --cream-100: #F5F1E8;
+            --cream-200: #E8E4D8;
+            --cream-300: #D2C9B8;
+            --cream-400: #B8AB94;
+            --charcoal-800: #1A1818;
+            --charcoal-900: #0F0E0E;
+            --sage: #8a9b68;
+            --clay: #b88c6c;
+            --stone: #7d8a9b;
+            --sky: #6c9bb8;
+            --coral: #D2691E;
+            --emerald: #046307;
+            --green-50: #f0fdf4;
+            --green-100: #dcfce7;
+            --green-200: #bbf7d0;
+            --green-300: #86efac;
+            --green-400: #4ade80;
+            --green-500: #22c55e;
+            --green-600: #16a34a;
+            --green-700: #15803d;
+            --green-800: #166534;
+            --green-900: #14532d;
+        }
+        
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--cream-50);
+            color: var(--charcoal-800);
+            background-image: url("data:image/svg+xml,%3Csvg width='100' height='100' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M11 18c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm48 25c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm-43-7c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm63 31c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM34 90c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm56-76c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM12 86c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm28-65c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4z' fill='%23e8e4d8' fill-opacity='0.06' fill-rule='evenodd'/%3E%3C/svg%3E");
+            transition: background-color 0.5s ease;
+            padding-top: 80px;
+            padding-bottom: 80px;
+        }
+        
+        body.dark-mode {
+            background-color: var(--charcoal-800);
+            color: var(--cream-100);
+            background-image: none;
+        }
+        
+        .font-serif {
+            font-family: 'Playfair Display', serif;
+        }
+        
+        .section {
+            display: none;
+            min-height: calc(100vh - 120px);
+            padding-bottom: 100px;
+        }
+        
+        .active-section {
+            display: block;
+        }
+        
+        .nav-btn {
+            transition: all 0.3s ease;
+            position: relative;
+            background: none;
+            border: none;
+            outline: none;
+        }
+        
+        .nav-btn.active {
+            color: var(--emerald);
+            position: relative;
+        }
+        
+        .nav-btn.active::after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 30px;
+            height: 4px;
+            background: linear-gradient(90deg, transparent, var(--emerald), transparent);
+            border-radius: 2px;
+        }
+        
+        .card {
+            background-color: var(--cream-100);
+            border-radius: 16px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+            transition: all 0.3s ease;
+            border: 1px solid var(--cream-200);
+        }
+        
+        body.dark-mode .card {
+            background-color: var(--charcoal-900);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+            border: 1px solid var(--charcoal-700);
+        }
+        
+        .task-card.completed {
+            opacity: 0.7;
+        }
+        
+        .badge {
+            background-color: var(--cream-200);
+            color: var(--charcoal-800);
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 0.75rem;
+            font-weight: 500;
+        }
+        
+        body.dark-mode .badge {
+            background-color: var(--cream-400);
+            color: var(--charcoal-900);
+        }
+        
+        .pomodoro-timer {
+            background: linear-gradient(135deg, var(--cream-200), var(--cream-300));
+            border-radius: 16px;
+            padding: 20px;
+            box-shadow: 0 6px 16px rgba(0,0,0,0.1);
+        }
+        
+        body.dark-mode .pomodoro-timer {
+            background: linear-gradient(135deg, var(--charcoal-900), #2a2727);
+        }
+        
+        .progress-bar {
+            height: 6px;
+            background-color: var(--cream-200);
+            border-radius: 3px;
+            overflow: hidden;
+            margin-top: 10px;
+        }
+        
+        .progress {
+            height: 100%;
+            background-color: var(--charcoal-800);
+            width: 0%;
+            transition: width 0.3s ease;
+        }
+        
+        body.dark-mode .progress {
+            background-color: var(--cream-200);
+        }
+        
+        .btn {
+            padding: 10px 18px;
+            border-radius: 12px;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            border: none;
+        }
+        
+        .btn-primary {
+            background-color: var(--charcoal-800);
+            color: var(--cream-50);
+        }
+        
+        body.dark-mode .btn-primary {
+            background-color: var(--cream-200);
+            color: var(--charcoal-800);
+        }
+        
+        .btn-outline {
+            background-color: transparent;
+            border: 1px solid var(--charcoal-800);
+            color: var(--charcoal-800);
+        }
+        
+        body.dark-mode .btn-outline {
+            border: 1px solid var(--cream-200);
+            color: var(--cream-200);
+        }
+        
+        .theme-toggle {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background-color: var(--cream-100);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            z-index: 100;
+        }
+        
+        body.dark-mode .theme-toggle {
+            background-color: var(--charcoal-900);
+        }
+        
+        .habit-tracker {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 4px;
+        }
+        
+        .habit-day {
+            aspect-ratio: 1/1;
+            border-radius: 6px;
+            background-color: var(--cream-200);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        
+        .habit-day.completed {
+            background-color: var(--sage);
+            color: white;
+        }
+        
+        .habit-day:hover {
+            transform: scale(1.1);
+        }
+        
+        /* Fixed Header */
+        header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+            background-color: var(--cream-50);
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        }
+        
+        body.dark-mode header {
+            background-color: var(--charcoal-800);
+            box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+        }
+        
+        /* Header Styles */
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            max-width: 6xl;
+            margin: 0 auto;
+            padding: 0 1.5rem;
+            height: 80px;
+        }
+        
+        .logo-container {
+            display: flex;
+            align-items: center;
+        }
+        
+        .coral-icon {
+            color: var(--coral);
+            font-size: 2rem;
+            margin-right: 0.75rem;
+        }
+        
+        .app-name {
+            font-size: 1.5rem;
+            font-weight: 600;
+            font-family: 'Playfair Display', serif;
+        }
+        
+        .datetime-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            font-family: 'Inter', sans-serif;
+        }
+        
+        .current-time {
+            font-size: 1.25rem;
+            font-weight: 600;
+        }
+        
+        .current-date {
+            font-size: 0.875rem;
+            opacity: 0.8;
+        }
+        
+        .profile-circle {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background-color: var(--cream-200);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 1.25rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .profile-circle:hover {
+            transform: scale(1.05);
+        }
+        
+        body.dark-mode .profile-circle {
+            background-color: var(--charcoal-700);
+        }
+        
+        /* Financial Goals Section */
+        .financial-goals {
+            cursor: pointer;
+            transition: transform 0.3s ease;
+        }
+        
+        .financial-goals:hover {
+            transform: translateY(-5px);
+        }
+        
+        .goal-card {
+            position: relative;
+            overflow: hidden;
+            border-radius: 16px;
+            padding: 20px;
+            background: var(--cream-200);
+            color: var(--charcoal-800);
+        }
+        
+        body.dark-mode .goal-card {
+            background-color: var(--charcoal-900);
+            color: var(--cream-100);
+        }
+        
+        .piggy-bank {
+            position: absolute;
+            bottom: 0;
+            right: 20px;
+            font-size: 4rem;
+            opacity: 0.7;
+            transform: translateY(10px);
+            color: var(--sage);
+        }
+        
+        .goal-progress {
+            height: 10px;
+            background-color: rgba(0,0,0,0.1);
+            border-radius: 5px;
+            overflow: hidden;
+            margin-top: 10px;
+        }
+        
+        .goal-progress-bar {
+            height: 100%;
+            background-color: var(--sage);
+            width: 65%;
+        }
+        
+        /* Task Views */
+        .task-view {
+            display: none;
+        }
+        
+        .task-view.active {
+            display: block;
+        }
+        
+        /* Calendar View */
+        .calendar-view {
+            padding: 15px;
+        }
+        
+        .calendar-grid {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 8px;
+        }
+        
+        .calendar-header {
+            text-align: center;
+            font-weight: 600;
+            padding: 10px 0;
+            border-bottom: 1px solid var(--cream-200);
+        }
+        
+        .calendar-note {
+            position: absolute;
+            top: 4px;
+            left: 4px;
+            font-size: 0.7rem;
+            background: var(--sage);
+            color: white;
+            border-radius: 4px;
+            padding: 2px 4px;
+            max-width: calc(100% - 8px);
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+        
+        /* Bottom Navigation */
+        .bottom-nav {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: rgba(250, 249, 245, 0.95);
+            backdrop-filter: blur(10px);
+            padding: 12px 0;
+            z-index: 100;
+        }
+        
+        body.dark-mode .bottom-nav {
+            background: rgba(15, 14, 14, 0.95);
+        }
+        
+        .nav-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-decoration: none;
+            color: var(--charcoal-800);
+            position: relative;
+            padding: 8px 0;
+            transition: all 0.3s ease;
+        }
+        
+        body.dark-mode .nav-item {
+            color: var(--cream-100);
+        }
+        
+        .nav-item.active {
+            color: var(--emerald);
+        }
+        
+        .nav-item.active::before {
+            content: '';
+            position: absolute;
+            top: -8px;
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(4, 99, 7, 0.3) 0%, rgba(4, 99, 7, 0) 70%);
+            z-index: -1;
+        }
+        
+        /* Custom Timer Input */
+        .custom-timer {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-top: 15px;
+        }
+        
+        .custom-timer input {
+            width: 50px;
+            padding: 8px;
+            border-radius: 8px;
+            border: 1px solid var(--charcoal-800);
+            text-align: center;
+            background-color: var(--cream-50);
+            transition: all 0.3s ease;
+        }
+        
+        body.dark-mode .custom-timer input {
+            border-color: var(--cream-200);
+            background-color: var(--charcoal-900);
+            color: var(--cream-100);
+        }
+        
+        .custom-timer input:focus {
+            border-color: var(--sage);
+            box-shadow: 0 0 0 2px rgba(138, 155, 104, 0.3);
+        }
+        
+        /* Financial Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.7);
+            z-index: 2000;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .modal-content {
+            background: var(--cream-100);
+            border-radius: 20px;
+            width: 90%;
+            max-width: 800px;
+            max-height: 90vh;
+            overflow: auto;
+            padding: 30px;
+            position: relative;
+        }
+        
+        body.dark-mode .modal-content {
+            background: var(--charcoal-900);
+        }
+        
+        .close-modal {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            font-size: 1.5rem;
+            cursor: pointer;
+        }
+        
+        .goal-form {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+        
+        .goal-form input {
+            flex: 1;
+            padding: 10px;
+            border-radius: 8px;
+            border: 1px solid var(--charcoal-800);
+            background-color: var(--cream-50);
+        }
+        
+        body.dark-mode .goal-form input {
+            background-color: var(--charcoal-900);
+            border-color: var(--cream-200);
+            color: var(--cream-100);
+        }
+        
+        .goal-list {
+            max-height: 300px;
+            overflow-y: auto;
+            margin-bottom: 20px;
+        }
+        
+        .goal-item {
+            padding: 10px;
+            border-bottom: 1px solid var(--cream-200);
+            display: flex;
+            align-items: center;
+        }
+        
+        .goal-item input[type="checkbox"] {
+            margin-right: 10px;
+        }
+        
+        .goal-item.completed .goal-text {
+            text-decoration: line-through;
+            opacity: 0.7;
+        }
+        
+        .calculator {
+            background: var(--cream-200);
+            border-radius: 12px;
+            padding: 15px;
+            margin-top: 20px;
+        }
+        
+        body.dark-mode .calculator {
+            background-color: var(--charcoal-800);
+        }
+        
+        .calculator-display {
+            background: var(--cream-50);
+            border-radius: 8px;
+            padding: 10px;
+            margin-bottom: 10px;
+            text-align: right;
+            font-size: 1.5rem;
+            height: 50px;
+            border: 1px solid var(--cream-300);
+        }
+        
+        body.dark-mode .calculator-display {
+            background-color: var(--charcoal-900);
+            border-color: var(--charcoal-700);
+            color: var(--cream-100);
+        }
+        
+        .calculator-keys {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 8px;
+        }
+        
+        .calculator-key {
+            padding: 10px;
+            border-radius: 8px;
+            background: var(--cream-100);
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            border: 1px solid var(--cream-300);
+        }
+        
+        body.dark-mode .calculator-key {
+            background-color: var(--charcoal-700);
+            color: var(--cream-100);
+            border-color: var(--charcoal-600);
+        }
+        
+        .key-operator {
+            background: var(--sage);
+            color: white;
+            border: none;
+        }
+        
+        .key-equal {
+            background: var(--emerald);
+            color: white;
+            grid-column: span 2;
+            border: none;
+        }
+        
+        .key-clear {
+            background: var(--clay);
+            color: white;
+            border: none;
+        }
+        
+        .key-percent {
+            background: var(--stone);
+            color: white;
+            border: none;
+        }
+        
+        /* Calendar day styling */
+        .calendar-day {
+            aspect-ratio: 1/1;
+            border-radius: 8px;
+            background-color: var(--cream-200);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            position: relative;
+            font-weight: 500;
+        }
+        
+        .calendar-day:hover {
+            background-color: var(--cream-300);
+        }
+        
+        .calendar-day.today {
+            background-color: var(--sage);
+            color: white;
+            font-weight: bold;
+        }
+        
+        .calendar-day.has-events::after {
+            content: '';
+            position: absolute;
+            bottom: 4px;
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background-color: var(--coral);
+        }
+        
+        .calendar-day.selected {
+            background-color: var(--emerald);
+            color: white;
+        }
+        
+        /* Calendar navigation */
+        .calendar-nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+        
+        .calendar-nav-btn {
+            background: none;
+            border: none;
+            font-size: 1.2rem;
+            cursor: pointer;
+            color: var(--charcoal-800);
+            padding: 5px 10px;
+            border-radius: 8px;
+            transition: all 0.2s ease;
+        }
+        
+        .calendar-nav-btn:hover {
+            background-color: var(--cream-200);
+        }
+        
+        body.dark-mode .calendar-nav-btn {
+            color: var(--cream-200);
+        }
+        
+        body.dark-mode .calendar-nav-btn:hover {
+            background-color: var(--charcoal-700);
+        }
+        
+        /* Goal item styling */
+        .goal-item {
+            display: flex;
+            align-items: center;
+            padding: 10px;
+            border-bottom: 1px solid var(--cream-200);
+        }
+        
+        .goal-item.completed .goal-text {
+            text-decoration: line-through;
+            opacity: 0.7;
+        }
+        
+        .delete-goal {
+            cursor: pointer;
+            color: var(--cream-400);
+            margin-left: 8px;
+            transition: all 0.2s ease;
+        }
+        
+        body.dark-mode .delete-goal {
+            color: var(--cream-300);
+        }
+        
+        /* Notes action buttons */
+        .notes-actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 10px;
+        }
+        
+        /* Custom pie chart */
+        .pie-chart-container {
+            position: relative;
+            height: 200px;
+        }
+        
+        .pie-center {
+            position: absolute;
+            width: 60%;
+            height: 60%;
+            background: var(--cream-100);
+            border-radius: 50%;
+            top: 20%;
+            left: 20%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 1.5rem;
+        }
+        
+        body.dark-mode .pie-center {
+            background: var(--charcoal-900);
+        }
+        
+        /* Monthly money section */
+        .category-item {
+            display: flex;
+            align-items: center;
+            padding: 8px;
+            background: var(--cream-100);
+            border-radius: 8px;
+            margin-bottom: 8px;
+        }
+        
+        .category-color {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            margin-right: 10px;
+        }
+        
+        .category-name {
+            flex: 1;
+        }
+        
+        .category-amount {
+            font-weight: 500;
+        }
+        
+        .category-actions {
+            margin-left: 10px;
+        }
+        
+        .color-picker {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            border: none;
+            padding: 0;
+            cursor: pointer;
+        }
+        
+        /* Water bottle styling */
+        .water-bottles {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 8px;
+            margin-top: 12px;
+        }
+        
+        .water-bottle {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            cursor: pointer;
+        }
+        
+        .bottle-icon {
+            font-size: 1.8rem;
+            color: var(--sky);
+            transition: all 0.3s ease;
+        }
+        
+        .water-bottle.completed .bottle-icon {
+            color: var(--emerald);
+        }
+        
+        .bottle-label {
+            font-size: 0.7rem;
+            margin-top: 4px;
+        }
+        
+        /* Health metrics styling */
+        .health-metrics {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 12px;
+            margin-top: 12px;
+        }
+        
+        .metric-card {
+            background-color: var(--cream-100);
+            border-radius: 12px;
+            padding: 12px;
+            text-align: center;
+            border: 1px solid var(--cream-200);
+        }
+        
+        body.dark-mode .metric-card {
+            background-color: var(--charcoal-900);
+            border-color: var(--charcoal-700);
+        }
+        
+        .metric-title {
+            font-size: 0.85rem;
+            margin-bottom: 6px;
+            opacity: 0.8;
+        }
+        
+        .metric-value {
+            font-size: 1.2rem;
+            font-weight: 600;
+            margin-top: 4px;
+        }
+        
+        .metric-value input {
+            width: 60px;
+            text-align: center;
+            border: none;
+            border-bottom: 1px solid var(--charcoal-800);
+            background: transparent;
+            font-size: 1.2rem;
+            font-weight: 500;
+            padding: 4px 0;
+        }
+        
+        body.dark-mode .metric-value input {
+            border-bottom: 1px solid var(--cream-200);
+            color: var(--cream-100);
+        }
+        
+        /* Photo upload styling */
+        .photo-upload {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 15px;
+            border: 2px dashed var(--cream-300);
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            min-height: 200px;
+            justify-content: center;
+        }
+        
+        .photo-upload:hover {
+            border-color: var(--sage);
+            background-color: rgba(138, 155, 104, 0.05);
+        }
+        
+        .photo-preview {
+            width: 150px;
+            height: 150px;
+            border-radius: 8px;
+            object-fit: cover;
+            display: none;
+        }
+        
+        /* Button hover effects */
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+        
+        .btn-primary:hover {
+            background-color: var(--charcoal-900);
+        }
+        
+        body.dark-mode .btn-primary:hover {
+            background-color: var(--cream-300);
+        }
+        
+        .btn-outline:hover {
+            background-color: rgba(0,0,0,0.05);
+        }
+        
+        body.dark-mode .btn-outline:hover {
+            background-color: rgba(255,255,255,0.1);
+        }
+        
+        /* Pie chart skeleton */
+        .empty-pie {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 200px;
+            color: var(--cream-300);
+            border: 2px dashed var(--cream-300);
+            border-radius: 50%;
+            text-align: center;
+            padding: 20px;
+        }
+        
+        body.dark-mode .empty-pie {
+            color: var(--cream-400);
+            border-color: var(--cream-400);
+        }
+
+        /* Enhanced habit tracker styles */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 16px;
+            margin-top: 20px;
+        }
+        
+        .stat-card {
+            background: var(--cream-100);
+            border-radius: 12px;
+            padding: 16px;
+            text-align: center;
+            border: 1px solid var(--cream-200);
+        }
+        
+        body.dark-mode .stat-card {
+            background: var(--charcoal-900);
+            border-color: var(--charcoal-700);
+        }
+        
+        .stat-value {
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin: 8px 0;
+        }
+        
+        .stat-label {
+            font-size: 0.85rem;
+            opacity: 0.8;
+        }
+        
+        .current-streak {
+            color: var(--emerald);
+        }
+        
+        .day-initial {
+            font-size: 0.7rem;
+            font-weight: 600;
+            opacity: 0.7;
+            margin-top: 2px;
+        }
+        
+        /* Habit Tracker Grid */
+        .habit-grid-container {
+            overflow-x: auto;
+            padding: 10px 0;
+            margin-top: 16px;
+        }
+        
+        .habit-grid {
+            display: grid;
+            grid-template-columns: auto repeat(31, 1fr);
+            gap: 4px;
+            min-width: max-content;
+        }
+        
+        .grid-header {
+            min-width: 24px;
+            height: 40px;
+            padding: 0;
+            text-align: center;
+            font-weight: 600;
+            font-size: 0.7rem;
+            background: var(--cream-200);
+            border-radius: 6px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        body.dark-mode .grid-header {
+            background: var(--charcoal-700);
+        }
+        
+        .grid-cell {
+            width: 24px;
+            height: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: var(--cream-200);
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            position: relative;
+            font-size: 0.7rem;
+        }
+        
+        body.dark-mode .grid-cell {
+            background: var(--charcoal-700);
+        }
+        
+        .grid-cell.checked {
+            background: var(--emerald);
+        }
+        
+        /* Remove tick marks from habit grid */
+        .grid-cell.checked::after {
+            content: none !important;
+        }
+        
+        .grid-cell:hover {
+            transform: scale(1.1);
+        }
+        
+        .habit-row-header {
+            height: 24px;
+            padding: 0 8px;
+            text-align: left;
+            font-weight: 500;
+            background: var(--cream-100);
+            border-radius: 8px;
+            position: sticky;
+            left: 0;
+            z-index: 2;
+            font-size: 0.8rem;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            display: flex;
+            align-items: center;
+            cursor: pointer;
+        }
+        
+        body.dark-mode .habit-row-header {
+            background: var(--charcoal-900);
+        }
+        
+        /* Habit Form */
+        .habit-form {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+        
+        .habit-input {
+            flex: 1;
+            padding: 12px 15px;
+            border-radius: 12px;
+            border: 1px solid var(--cream-300);
+            background: var(--cream-50);
+            font-size: 1rem;
+        }
+        
+        body.dark-mode .habit-input {
+            background: var(--charcoal-900);
+            border-color: var(--charcoal-700);
+            color: var(--cream-100);
+        }
+        
+        /* Tips section */
+        .tip-card {
+            flex: 1;
+            padding: 15px;
+            border-radius: 12px;
+            background: linear-gradient(145deg, var(--cream-100), var(--cream-200));
+            display: flex;
+            align-items: center;
+        }
+        
+        body.dark-mode .tip-card {
+            background: linear-gradient(145deg, var(--charcoal-900), var(--charcoal-800));
+        }
+        
+        .tip-icon {
+            font-size: 1.5rem;
+            margin-right: 15px;
+            color: var(--emerald);
+        }
+        
+        .tip-content h4 {
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+        
+        .tip-content p {
+            font-size: 0.9rem;
+            opacity: 0.9;
+        }
+        
+        /* Notification */
+        .notification {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background-color: var(--emerald);
+            color: white;
+            padding: 12px 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            z-index: 1000;
+            transform: translateY(100px);
+            opacity: 0;
+            transition: all 0.3s ease;
+        }
+        
+        .notification.show {
+            transform: translateY(0);
+            opacity: 1;
+        }
+
+        /* Event dot styling */
+        .event-dot {
+            position: absolute;
+            bottom: 2px;
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background-color: var(--coral);
+        }
+        
+        /* Delete buttons */
+        .delete-btn {
+            cursor: pointer;
+            color: var(--coral);
+            margin-left: 8px;
+            transition: all 0.2s ease;
+        }
+        
+        .delete-btn:hover {
+            transform: scale(1.2);
+        }
+        
+        /* Fixed chart container */
+        .line-graph-container {
+            height: 300px;
+            position: relative;
+        }
+        
+        /* Enhanced event markers */
+        .event-markers {
+            position: absolute;
+            bottom: 4px;
+            left: 0;
+            right: 0;
+            display: flex;
+            justify-content: center;
+            gap: 3px;
+            padding: 0 4px;
+        }
+        
+        .event-marker {
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+        }
+        
+        .event-marker-1 { background-color: #e74c3c; }
+        .event-marker-2 { background-color: #2ecc71; }
+        .event-marker-3 { background-color: #3498db; }
+        .event-marker-4 { background-color: #9b59b6; }
+        
+        /* Calendar styling adjustments */
+        .calendar-container {
+            margin-bottom: 24px;
+            background-color: var(--cream-100);
+            border-radius: 16px;
+            padding: 16px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.05);
+        }
+        
+        body.dark-mode .calendar-container {
+            background-color: var(--charcoal-900);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+        }
+        
+        .calendar-title {
+            font-family: 'Playfair Display', serif;
+            font-weight: 600;
+            font-size: 1.25rem;
+            margin-bottom: 12px;
+        }
+        
+        .calendar-nav-buttons {
+            display: flex;
+            gap: 8px;
+        }
+
+        /* New task styles */
+        .task-note {
+            background-color: var(--cream-100);
+            border-radius: 12px;
+            padding: 15px;
+            margin-bottom: 15px;
+            position: relative;
+            box-shadow: 0 3px 8px rgba(0,0,0,0.05);
+            border: 1px solid var(--cream-200);
+            transition: all 0.3s ease;
+        }
+        
+        .task-note:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+        }
+        
+        .task-note-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+        
+        .task-note-icon {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            background-color: var(--cream-200);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 10px;
+            font-size: 14px;
+        }
+        
+        .task-note-title {
+            flex: 1;
+            font-weight: 600;
+            font-family: 'Playfair Display', serif;
+            outline: none;
+        }
+        
+        .task-note-content {
+            padding: 10px;
+            border-radius: 8px;
+            background-color: var(--cream-50);
+            min-height: 80px;
+            margin-bottom: 10px;
+            outline: none;
+        }
+        
+        .task-note-reminder {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-top: 10px;
+            padding-top: 10px;
+            border-top: 1px dashed var(--cream-200);
+        }
+        
+        .reminder-label {
+            font-size: 0.8rem;
+            color: var(--cream-400);
+        }
+        
+        .reminder-time {
+            background-color: var(--cream-200);
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 500;
+        }
+        
+        .reminder-set-btn {
+            background: var(--cream-200);
+            border-radius: 8px;
+            padding: 6px 12px;
+            font-size: 0.8rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        
+        .reminder-set-btn:hover {
+            background: var(--cream-300);
+        }
+        
+        .reminder-input {
+            padding: 6px 10px;
+            border-radius: 8px;
+            border: 1px solid var(--cream-300);
+            background: var(--cream-50);
+            width: 100px;
+        }
+        
+        .reminder-day-select {
+            padding: 6px 10px;
+            border-radius: 8px;
+            border: 1px solid var(--cream-300);
+            background: var(--cream-50);
+            width: 80px;
+        }
+        
+        body.dark-mode .task-note {
+            background-color: var(--charcoal-900);
+            border-color: var(--charcoal-700);
+        }
+        
+        body.dark-mode .task-note-content {
+            background-color: var(--charcoal-800);
+        }
+        
+        body.dark-mode .reminder-set-btn {
+            background: var(--charcoal-700);
+        }
+        
+        body.dark-mode .reminder-input,
+        body.dark-mode .reminder-day-select {
+            background: var(--charcoal-800);
+            border-color: var(--charcoal-600);
+            color: var(--cream-100);
+        }
+        
+        .reminder-bell {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            color: var(--clay);
+            font-size: 1.2rem;
+            cursor: pointer;
+        }
+        
+        .reminder-active {
+            color: var(--emerald);
+            animation: ring 0.5s ease-in-out 2;
+        }
+        
+        @keyframes ring {
+            0% { transform: rotate(0); }
+            25% { transform: rotate(15deg); }
+            50% { transform: rotate(-15deg); }
+            75% { transform: rotate(10deg); }
+            100% { transform: rotate(0); }
+        }
+        
+        .add-task-btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 10px;
+            border: 1px dashed var(--cream-300);
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-top: 15px;
+        }
+        
+        .add-task-btn:hover {
+            border-color: var(--sage);
+            background-color: rgba(138, 155, 104, 0.05);
+        }
+        
+        .task-limit {
+            text-align: center;
+            margin-top: 10px;
+            font-size: 0.85rem;
+            color: var(--cream-400);
+        }
+        
+        .hidden {
+            display: none;
+        }
+        
+        /* Added styles for edit/delete buttons */
+        .task-actions {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            display: flex;
+            gap: 8px;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+        
+        .task-note:hover .task-actions {
+            opacity: 1;
+        }
+        
+        .habit-actions {
+            display: flex;
+            gap: 8px;
+            margin-left: 10px;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+        
+        .habit-row-header:hover .habit-actions {
+            opacity: 1;
+        }
+        
+        .action-btn {
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        
+        .action-btn:hover {
+            transform: scale(1.2);
+        }
+        
+        .edit-btn {
+            color: var(--stone);
+        }
+        
+        .delete-btn {
+            color: var(--coral);
+        }
+        
+        /* Added styles for hydration state */
+        .water-bottle.completed .bottle-icon {
+            color: var(--emerald);
+        }
+        
+        /* Scrollable containers */
+        .scrollable-container {
+            max-height: 300px;
+            overflow-y: auto;
+            padding-right: 5px;
+        }
+        
+        /* Custom scrollbar */
+        .scrollable-container::-webkit-scrollbar {
+            width: 6px;
+        }
+        
+        .scrollable-container::-webkit-scrollbar-track {
+            background: var(--cream-200);
+            border-radius: 10px;
+        }
+        
+        .scrollable-container::-webkit-scrollbar-thumb {
+            background: var(--sage);
+            border-radius: 10px;
+        }
+        
+        body.dark-mode .scrollable-container::-webkit-scrollbar-track {
+            background: var(--charcoal-700);
+        }
+        
+        body.dark-mode .scrollable-container::-webkit-scrollbar-thumb {
+            background: var(--emerald);
+        }
+    </style>
+</head>
+<body>
+    <div class="theme-toggle" id="themeToggle">
+        <i class="fas fa-moon" id="themeIcon"></i>
+    </div>
+    
+    <div id="notification" class="notification">
+        <i class="fas fa-check-circle mr-2"></i>
+        <span id="notificationMessage">Habit updated successfully!</span>
+    </div>
+
+    <!-- Financial Goals Modal -->
+    <div class="modal" id="financialModal">
+        <div class="modal-content">
+            <span class="close-modal" id="closeModal">&times;</span>
+            <h2 class="text-2xl font-serif font-bold mb-6">Financial Goals Dashboard</h2>
+            
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                <div class="lg:col-span-2">
+                    <h3 class="font-serif font-bold mb-4">Pie Chart Calculator</h3>
+                    
+                    <div class="goal-form">
+                        <input type="text" id="newGoal" placeholder="Add a new goal..." class="flex-1 p-3 bg-cream-50 rounded-lg">
+                        <button class="btn btn-primary" id="addGoal">Add</button>
+                    </div>
+                    
+                    <div class="goal-list" id="goalsList">
+                        <!-- Goals will be added here dynamically -->
+                    </div>
+                    
+                    <div class="mt-6">
+                        <div class="grid grid-cols-2 gap-2 mb-4">
+                            <input type="text" id="newCategory" placeholder="Category" class="p-2 rounded-lg">
+                            <input type="number" id="newAmount" placeholder="Amount" class="p-2 rounded-lg">
+                            <div class="flex items-center col-span-2 gap-2">
+                                <input type="color" id="categoryColor" class="color-picker" value="#8a9b68">
+                                <button class="btn btn-primary flex-1" id="addCategory">Add</button>
+                            </div>
+                        </div>
+                        <div id="categoriesList" class="space-y-2">
+                            <!-- Categories will be added here dynamically -->
+                        </div>
+                    </div>
+                    
+                    <div class="card p-4 mt-6">
+                        <h3 class="font-serif font-bold mb-4">Notes</h3>
+                        <textarea id="financialNotes" class="w-full bg-cream-50 rounded-lg p-4 min-h-[150px]" placeholder="Add notes about your financial goals..."></textarea>
+                        <div class="notes-actions">
+                            <button class="btn btn-outline" id="saveNotes"><i class="fas fa-save mr-2"></i>Save</button>
+                            <button class="btn btn-outline" id="clearNotes"><i class="fas fa-trash mr-2"></i>Clear</button>
+                        </div>
+                    </div>
+                </div>
+                
+                <div>
+                    <div class="calculator">
+                        <div class="calculator-display" id="calcDisplay">0</div>
+                        <div class="calculator-keys">
+                            <div class="calculator-key">7</div>
+                            <div class="calculator-key">8</div>
+                            <div class="calculator-key">9</div>
+                            <div class="calculator-key key-operator">÷</div>
+                            <div class="calculator-key key-operator key-clear">C</div>
+                            <div class="calculator-key">4</div>
+                            <div class="calculator-key">5</div>
+                            <div class="calculator-key">6</div>
+                            <div class="calculator-key key-operator">×</div>
+                            <div class="calculator-key key-operator key-percent">%</div>
+                            <div class="calculator-key">1</div>
+                            <div class="calculator-key">2</div>
+                            <div class="calculator-key">3</div>
+                            <div class="calculator-key key-operator">-</div>
+                            <div class="calculator-key">0</div>
+                            <div class="calculator-key">.</div>
+                            <div class="calculator-key key-operator">+</div>
+                            <div class="calculator-key key-equal">=</div>
+                        </div>
+                    </div>
+                    
+                    <div class="p-4 mt-6 rounded-lg shadow cream-card">
+                        <div class="flex items-center justify-between mb-4">
+                            <h3 class="font-serif font-bold">Savings Target</h3>
+                            <i class="fas fa-piggy-bank text-3xl text-sage"></i>
+                        </div>
+                        <div class="text-center mb-4">
+                            <input type="number" id="savingsAmount" class="text-3xl font-bold text-center w-full bg-transparent border-b mb-2" value="0">
+                            <div class="text-sm opacity-75">of <input type="number" id="savingsGoal" class="text-center w-32 bg-transparent border-b" value="10000"></div>
+                        </div>
+                        <div class="goal-progress">
+                            <div class="goal-progress-bar" id="savingsProgressBar"></div>
+                        </div>
+                        <div class="mt-2 text-sm text-center" id="savingsPercent">0% completed</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <header>
+        <div class="header-content">
+            <div class="logo-container">
+                <i class="fas fa-water coral-icon"></i>
+                <div class="app-name">Lithe</div>
+            </div>
+            
+            <div class="datetime-container">
+                <div class="current-time" id="currentTime">10:30 AM</div>
+                <div class="current-date" id="currentDate">Monday, August 5, 2025</div>
+            </div>
+            
+            <div class="profile-circle" id="profileCircle">U</div>
+        </div>
+    </header>
+    
+    <main class="max-w-6xl mx-auto px-4 py-6">
+        <section id="iSection" class="section active-section">
+            <div class="flex justify-between items-center mb-6">
+                <h2 class="text-2xl font-serif font-bold">Focused Productivity</h2>
+                <div class="text-sm bg-emerald-100 text-emerald-800 px-3 py-1 rounded-full">
+                    <i class="fas fa-sync-alt mr-1"></i> Synced
+                </div>
+            </div>
+            
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
+                <div class="card p-6 lg:col-span-2">
+                    <!-- Calendar at the top of tasks section -->
+                    <div class="calendar-container mb-6">
+                        <div class="flex justify-between items-center">
+                            <h3 class="calendar-title">August 2025</h3>
+                            <div class="calendar-nav-buttons">
+                                <button class="btn btn-outline px-3 py-1" id="topPrevMonthBtn">
+                                    <i class="fas fa-chevron-left"></i>
+                                </button>
+                                <button class="btn btn-outline px-3 py-1" id="topNextMonthBtn">
+                                    <i class="fas fa-chevron-right"></i>
+                                </button>
+                            </div>
+                        </div>
+                        
+                        <div class="calendar-grid">
+                            <div class="calendar-header">Sun</div>
+                            <div class="calendar-header">Mon</div>
+                            <div class="calendar-header">Tue</div>
+                            <div class="calendar-header">Wed</div>
+                            <div class="calendar-header">Thu</div>
+                            <div class="calendar-header">Fri</div>
+                            <div class="calendar-header">Sat</div>
+                            <!-- Days will be populated by JavaScript -->
+                        </div>
+                    </div>
+                    
+                    <div class="flex space-x-2 mb-6">
+                        <button data-view="daily" class="task-view-btn active px-4 py-2 rounded-lg">Daily</button>
+                        <button data-view="weekly" class="task-view-btn px-4 py-2 rounded-lg">Weekly</button>
+                        <button data-view="monthly" class="task-view-btn px-4 py-2 rounded-lg">Monthly</button>
+                    </div>
+                    
+                    <!-- Task Views Container -->
+                    <div id="taskViewsContainer">
+                        <!-- Daily View -->
+                        <div id="dailyView" class="task-view active">
+                            <div class="task-limit">Maximum of 5 tasks per day</div>
+                            <div class="scrollable-container">
+                                <div id="dailyTasksContainer" class="space-y-4">
+                                    <!-- Daily tasks will be added here dynamically -->
+                                </div>
+                            </div>
+                            <div class="add-task-btn" id="addDailyTask">
+                                <i class="fas fa-plus mr-2"></i> Add Daily Task
+                            </div>
+                        </div>
+                        
+                        <!-- Weekly View -->
+                        <div id="weeklyView" class="task-view">
+                            <div class="task-limit">Maximum of 5 tasks per week</div>
+                            <div class="scrollable-container">
+                                <div id="weeklyTasksContainer" class="space-y-4">
+                                    <!-- Weekly tasks will be added here dynamically -->
+                                </div>
+                            </div>
+                            <div class="add-task-btn" id="addWeeklyTask">
+                                <i class="fas fa-plus mr-2"></i> Add Weekly Task
+                            </div>
+                        </div>
+                        
+                        <!-- Monthly View -->
+                        <div id="monthlyView" class="task-view">
+                            <div class="task-limit">Maximum of 5 tasks per month</div>
+                            <div class="scrollable-container">
+                                <div id="monthlyTasksContainer" class="space-y-4">
+                                    <!-- Monthly tasks will be added here dynamically -->
+                                </div>
+                            </div>
+                            <div class="add-task-btn" id="addMonthlyTask">
+                                <i class="fas fa-plus mr-2"></i> Add Monthly Task
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Reflective Notes Section -->
+                    <div class="notes-section card p-6 mt-6">
+                        <h3 class="font-serif font-bold mb-4">Reflective Notes</h3>
+                        <textarea id="notesArea" placeholder="Your notes and ideas..." class="w-full bg-cream-50 rounded-lg p-4 min-h-[200px]"></textarea>
+                        <div class="mt-3 flex justify-end">
+                            <button class="btn btn-outline" id="saveReflectiveNotes"><i class="fas fa-save mr-2"></i>Save Notes</button>
+                            <button class="btn btn-outline ml-2"><i class="fas fa-download mr-2"></i>Export</button>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="space-y-6">
+                    <div class="card p-6">
+                        <h3 class="font-serif font-bold mb-4 text-center">Focus Timer</h3>
+                        <div class="text-5xl font-mono text-center mb-4" id="timerDisplay">25:00</div>
+                        <div class="flex justify-center space-x-4">
+                            <button class="btn btn-primary" id="startTimer"><i class="fas fa-play mr-2"></i>Start</button>
+                            <button class="btn btn-outline" id="resetTimer"><i class="fas fa-redo mr-2"></i>Reset</button>
+                        </div>
+                        <div class="mt-4 flex justify-center space-x-2">
+                            <button class="btn btn-outline timer-preset" data-minutes="25">Work</button>
+                            <button class="btn btn-outline timer-preset" data-minutes="5">Short Break</button>
+                            <button class="btn btn-outline timer-preset" data-minutes="15">Long Break</button>
+                        </div>
+                        
+                        <div class="custom-timer">
+                            <input type="number" id="customMinutes" min="1" max="120" placeholder="Min">
+                            <button class="btn btn-outline" id="setCustomTimer">Set Custom</button>
+                        </div>
+                    </div>
+                    
+                    <!-- Photo Upload Section -->
+                    <div class="card p-6">
+                        <h3 class="font-serif font-bold mb-4">Upload Photo</h3>
+                        <div class="photo-upload" id="photoUpload">
+                            <i class="fas fa-cloud-upload-alt text-4xl mb-3 text-sage"></i>
+                            <p class="text-center mb-3">Click to upload a photo</p>
+                            <img id="photoPreview" class="photo-preview" alt="Preview">
+                        </div>
+                        <input type="file" id="photoInput" accept="image/*" class="hidden">
+                    </div>
+                    
+                    <!-- Financial Goals Section -->
+                    <div class="card p-6 financial-goals" id="financialGoals">
+                        <h3 class="font-serif font-bold mb-4">Financial Goals</h3>
+                        <div class="goal-card">
+                            <div class="font-bold text-xl mb-2">Savings Target</div>
+                            <div class="text-3xl mb-2" id="mainSavingsAmount">$0 / $0</div>
+                            <div class="goal-progress">
+                                <div class="goal-progress-bar" id="mainSavingsProgressBar"></div>
+                            </div>
+                            <div class="mt-2 text-sm" id="mainSavingsPercent">0% completed</div>
+                            <i class="fas fa-piggy-bank piggy-bank"></i>
+                        </div>
+                        
+                        <div class="mt-4" id="chartContainer">
+                            <!-- Pie chart will be added here dynamically -->
+                            <div class="empty-pie">
+                                <i class="fas fa-chart-pie text-4xl mb-2"></i>
+                                <div>Add categories to see pie chart</div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Hydration Level Section -->
+                    <div class="card p-6">
+                        <h3 class="font-serif font-bold mb-4 text-center">Hydration Tracker</h3>
+                        <div class="text-center text-sm opacity-75 mb-3">8 glasses per day</div>
+                        <div class="water-bottles">
+                            <div class="water-bottle" data-bottle="1">
+                                <i class="fas fa-wine-bottle bottle-icon"></i>
+                                <div class="bottle-label">1</div>
+                            </div>
+                            <div class="water-bottle" data-bottle="2">
+                                <i class="fas fa-wine-bottle bottle-icon"></i>
+                                <div class="bottle-label">2</div>
+                            </div>
+                            <div class="water-bottle" data-bottle="3">
+                                <i class="fas fa-wine-bottle bottle-icon"></i>
+                                <div class="bottle-label">3</div>
+                            </div>
+                            <div class="water-bottle" data-bottle="4">
+                                <i class="fas fa-wine-bottle bottle-icon"></i>
+                                <div class="bottle-label">4</div>
+                            </div>
+                            <div class="water-bottle" data-bottle="5">
+                                <i class="fas fa-wine-bottle bottle-icon"></i>
+                                <div class="bottle-label">5</div>
+                            </div>
+                            <div class="water-bottle" data-bottle="6">
+                                <i class="fas fa-wine-bottle bottle-icon"></i>
+                                <div class="bottle-label">6</div>
+                            </div>
+                            <div class="water-bottle" data-bottle="7">
+                                <i class="fas fa-wine-bottle bottle-icon"></i>
+                                <div class="bottle-label">7</div>
+                            </div>
+                            <div class="water-bottle" data-bottle="8">
+                                <i class="fas fa-wine-bottle bottle-icon"></i>
+                                <div class="bottle-label">8</div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Health Metrics Section -->
+                    <div class="health-metrics">
+                        <div class="metric-card">
+                            <div class="metric-title">Sleep Hours</div>
+                            <div class="metric-value">
+                                <input type="number" value="7" min="0" max="24" id="sleepInput">
+                            </div>
+                        </div>
+                        <div class="metric-card">
+                            <div class="metric-title">Weight (kg)</div>
+                            <div class="metric-value">
+                                <input type="number" value="65" min="0" id="weightInput">
+                            </div>
+                        </div>
+                        <div class="metric-card">
+                            <div class="metric-title">Walks (km)</div>
+                            <div class="metric-value">
+                                <input type="number" value="3.5" min="0" step="0.1" id="walkInput">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Enhanced Habit Dashboard -->
+            <div class="habit-dashboard">
+                <!-- Month Title -->
+                <div class="flex justify-between items-center mb-6">
+                    <h3 class="font-serif font-bold text-xl" id="currentHabitMonth">August 2025</h3>
+                    <div class="flex space-x-2">
+                        <button class="btn btn-outline px-3 py-1" id="prevMonthBtn">
+                            <i class="fas fa-chevron-left"></i>
+                        </button>
+                        <button class="btn btn-outline px-3 py-1" id="nextMonthBtn">
+                            <i class="fas fa-chevron-right"></i>
+                        </button>
+                    </div>
+                </div>
+                
+                <!-- Habit Form -->
+                <div class="habit-form">
+                    <input type="text" id="habitInput" placeholder="Add your own habit (e.g. Drink 8 glasses of water)" class="habit-input">
+                    <button id="addHabitBtn" class="btn btn-primary">Add Habit</button>
+                </div>
+                
+                <!-- Updated Habit Tracker with Rectangular Headers -->
+                <div class="mb-8">
+                    <div class="habit-grid-container">
+                        <div class="habit-grid" id="habitGrid">
+                            <!-- Habit grid will be generated dynamically -->
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Line Graph Showing Daily Average Completion -->
+                <div class="line-graph-container">
+                    <div class="flex justify-between items-center mb-4">
+                        <h4 class="font-serif font-bold">Daily Habit Completion</h4>
+                        <div class="text-sm text-emerald-700 bg-emerald-100 px-2 py-1 rounded">
+                            <i class="fas fa-chart-line mr-1"></i> 30-Day Trend
+                        </div>
+                    </div>
+                    <canvas id="habitChart"></canvas>
+                </div>
+            </div>
+        </section>
+    </main>
+    
+    <nav class="bottom-nav">
+        <div class="max-w-4xl mx-auto flex justify-between px-6">
+            <a href="us.html" class="nav-item">
+                <span class="text-lg font-bold">US</span>
+                <span class="text-xs mt-1">Wisdom</span>
+            </a>
+            <a href="u.html" class="nav-item">
+                <span class="text-lg font-bold">U</span>
+                <span class="text-xs mt-1">Reflection</span>
+            </a>
+            <a href="i.html" class="nav-item active">
+                <span class="text-lg font-bold">I</span>
+                <span class="text-xs mt-1">Productivity</span>
+            </a>
+            <a href="we.html" class="nav-item">
+                <span class="text-lg font-bold">WE</span>
+                <span class="text-xs mt-1">Community</span>
+            </a>
+        </div>
+    </nav>
+
+    <script>
+        // App state
+        const state = {
+            habits: [
+                { id: 1, name: 'Morning Meditation', days: Array(31).fill(false) },
+                { id: 2, name: '30-min Exercise', days: Array(31).fill(false) },
+                { id: 3, name: 'Read 20 Pages', days: Array(31).fill(false) },
+                { id: 4, name: 'Drink 8 Glasses', days: Array(31).fill(false) },
+                { id: 5, name: 'No Sugar', days: Array(31).fill(false) }
+            ],
+            hydration: Array(8).fill(false),
+            events: {},
+            tasks: {
+                daily: [],
+                weekly: [],
+                monthly: []
+            },
+            notes: "",
+            healthMetrics: {
+                sleep: 7,
+                weight: 65,
+                walk: 3.5
+            }
+        };
+        
+        // Financial data
+        let financialGoals = [];
+        let categories = [];
+        let savingsGoal = 0;
+        let savingsAmount = 0;
+        let financialNotes = '';
+        let financialChart = null;
+        let habitChart = null;
+        
+        // Calendar data
+        let currentMonth = 7; // August (0-indexed)
+        let currentYear = 2025;
+        let selectedDate = new Date();
+        let habitMonth = 7; // August (0-indexed)
+        let habitYear = 2025;
+        
+        // Top calendar state
+        let topCalendarMonth = 7; // August (0-indexed)
+        let topCalendarYear = 2025;
+        let topSelectedDate = new Date();
+        
+        // Initialize app
+        function initApp() {
+            // Load saved data
+            loadData();
+            
+            // Update clock and date
+            updateDateTime();
+            setInterval(updateDateTime, 60000);
+            
+            // Initialize charts
+            initCharts();
+            
+            // Set up task view switching
+            setupTaskViews();
+            
+            // Set up calculator
+            setupCalculator();
+            
+            // Initialize financial components
+            initFinancialComponents();
+            
+            // Set up goal management
+            setupGoalManagement();
+            
+            // Initialize calendar
+            renderTopCalendar();
+            
+            // Set up habit dashboard
+            initHabitDashboard();
+            
+            // Set up tasks
+            setupTasks();
+            
+            // Set up notes saving
+            setupNotesSaving();
+            
+            // Set up photo upload
+            setupPhotoUpload();
+            
+            // Set up hydration tracker
+            setupHydrationTracker();
+            
+            // Set up top calendar events
+            setupTopCalendarEvents();
+            
+            // Load saved notes
+            loadSavedNotes();
+            
+            // Check for reminders every minute
+            setInterval(checkReminders, 60000);
+        }
+        
+        // Save all app data to localStorage
+        function saveData() {
+            localStorage.setItem('appState', JSON.stringify(state));
+        }
+        
+        // Load all app data from localStorage
+        function loadData() {
+            const savedState = localStorage.getItem('appState');
+            if (savedState) {
+                const parsed = JSON.parse(savedState);
+                Object.keys(parsed).forEach(key => {
+                    state[key] = parsed[key];
+                });
+            }
+            
+            // Initialize hydration state if not present
+            if (!state.hydration || state.hydration.length === 0) {
+                state.hydration = Array(8).fill(false);
+            }
+        }
+        
+        function updateDateTime() {
+            const now = new Date();
+            const timeOptions = { hour: 'numeric', minute: 'numeric', hour12: true };
+            const dateOptions = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+            
+            document.getElementById('currentTime').textContent = now.toLocaleTimeString('en-US', timeOptions);
+            document.getElementById('currentDate').textContent = now.toLocaleDateString('en-US', dateOptions);
+        }
+
+        function initCharts() {
+            // Create canvas for financial chart
+            const chartContainer = document.getElementById('chartContainer');
+            chartContainer.innerHTML = '<canvas id="financialChart" height="200"></canvas>';
+            
+            // Initialize empty pie chart
+            const financialCtx = document.getElementById('financialChart').getContext('2d');
+            financialChart = new Chart(financialCtx, {
+                type: 'pie',
+                data: {
+                    labels: [],
+                    datasets: [{
+                        data: [],
+                        backgroundColor: [],
+                        borderWidth: 2,
+                        borderColor: 'var(--cream-100)',
+                        hoverOffset: 10
+                    }]
+                },
+                options: {
+                    plugins: {
+                        legend: {
+                            position: 'bottom',
+                            labels: {
+                                padding: 20,
+                                usePointStyle: true,
+                                pointStyle: 'circle'
+                            }
+                        }
+                    }
+                }
+            });
+            
+            // Show skeleton initially
+            showPieSkeleton();
+            
+            // Initialize habit chart
+            initHabitChart();
+        }
+        
+        function initHabitChart() {
+            const ctx = document.getElementById('habitChart').getContext('2d');
+            
+            // Create gradient for the line
+            const gradient = ctx.createLinearGradient(0, 0, 0, 300);
+            gradient.addColorStop(0, 'rgba(138, 155, 104, 0.8)');
+            gradient.addColorStop(1, 'rgba(138, 155, 104, 0.2)');
+            
+            // Create gradient for fill
+            const fillGradient = ctx.createLinearGradient(0, 0, 0, 300);
+            fillGradient.addColorStop(0, 'rgba(138, 155, 104, 0.2)');
+            fillGradient.addColorStop(1, 'rgba(138, 155, 104, 0)');
+            
+            habitChart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: Array.from({length: 31}, (_, i) => i + 1),
+                    datasets: [{
+                        label: 'Daily Completion %',
+                        data: [],
+                        fill: {
+                            target: 'origin',
+                            above: fillGradient
+                        },
+                        borderColor: gradient,
+                        tension: 0.3,
+                        pointBackgroundColor: 'var(--sage)',
+                        pointBorderColor: 'white',
+                        pointBorderWidth: 2,
+                        pointRadius: 5,
+                        pointHoverRadius: 7,
+                        borderWidth: 3
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            display: false
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    return `Completion: ${context.parsed.y}%`;
+                                }
+                            }
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            max: 100,
+                            grid: {
+                                color: 'rgba(0,0,0,0.05)'
+                            },
+                            ticks: {
+                                callback: function(value) {
+                                    return value + '%';
+                                }
+                            },
+                            title: {
+                                display: true,
+                                text: 'Completion Rate'
+                            }
+                        },
+                        x: {
+                            grid: {
+                                display: false
+                            },
+                            title: {
+                                display: true,
+                                text: 'Day of Month'
+                            }
+                        }
+                    },
+                    elements: {
+                        line: {
+                            borderWidth: 3
+                        }
+                    }
+                }
+            });
+            
+            // Set initial chart data
+            updateHabitChart();
+        }
+        
+        function updateHabitChart() {
+            if (!habitChart) return;
+            
+            // Calculate daily completion percentages
+            const daysInMonth = new Date(habitYear, habitMonth + 1, 0).getDate();
+            const dailyCompletion = Array(daysInMonth).fill(0);
+            const habitCount = state.habits.length;
+            
+            // Calculate completion for each day
+            for (let day = 0; day < daysInMonth; day++) {
+                let completedCount = 0;
+                
+                state.habits.forEach(habit => {
+                    if (habit.days[day]) {
+                        completedCount++;
+                    }
+                });
+                
+                dailyCompletion[day] = habitCount > 0 ? Math.round((completedCount / habitCount) * 100) : 0;
+            }
+            
+            // Update chart data
+            habitChart.data.labels = Array.from({length: daysInMonth}, (_, i) => i + 1);
+            habitChart.data.datasets[0].data = dailyCompletion;
+            habitChart.update();
+        }
+        
+        function showPieSkeleton() {
+            const chartContainer = document.getElementById('chartContainer');
+            chartContainer.innerHTML = `
+                <div class="empty-pie">
+                    <i class="fas fa-chart-pie text-4xl mb-2"></i>
+                    <div>Add categories to see pie chart</div>
+                </div>
+            `;
+        }
+        
+        function setupTaskViews() {
+            // Get all task view buttons
+            const taskViewButtons = document.querySelectorAll('.task-view-btn');
+            
+            // Add click event to each button
+            taskViewButtons.forEach(button => {
+                button.addEventListener('click', () => {
+                    // Remove active class from all buttons
+                    taskViewButtons.forEach(btn => btn.classList.remove('active'));
+                    
+                    // Add active class to clicked button
+                    button.classList.add('active');
+                    
+                    // Get the view to show
+                    const viewId = button.getAttribute('data-view') + 'View';
+                    
+                    // Hide all views
+                    document.querySelectorAll('.task-view').forEach(view => {
+                        view.classList.remove('active');
+                    });
+                    
+                    // Show selected view
+                    document.getElementById(viewId).classList.add('active');
+                    
+                    // Render tasks for the selected view
+                    renderTasksForView(button.getAttribute('data-view'));
+                });
+            });
+        }
+        
+        function renderTopCalendar() {
+            const calendarGrid = document.querySelector('.calendar-grid');
+            if (!calendarGrid) return;
+            
+            // Clear existing content
+            calendarGrid.innerHTML = '';
+            
+            // Update calendar title
+            const monthNames = ["January", "February", "March", "April", "May", "June",
+                              "July", "August", "September", "October", "November", "December"];
+            document.querySelector('.calendar-title').textContent = `${monthNames[topCalendarMonth]} ${topCalendarYear}`;
+            
+            // Get first day of month and number of days
+            const firstDay = new Date(topCalendarYear, topCalendarMonth, 1).getDay();
+            const daysInMonth = new Date(topCalendarYear, topCalendarMonth + 1, 0).getDate();
+            const today = new Date();
+            const isCurrentMonth = today.getMonth() === topCalendarMonth && today.getFullYear() === topCalendarYear;
+            
+            // Add headers
+            const days = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+            days.forEach(day => {
+                const header = document.createElement('div');
+                header.className = 'calendar-header';
+                header.textContent = day;
+                calendarGrid.appendChild(header);
+            });
+            
+            // Add empty cells for days before first day
+            for (let i = 0; i < firstDay; i++) {
+                const emptyCell = document.createElement('div');
+                emptyCell.className = 'calendar-day empty';
+                calendarGrid.appendChild(emptyCell);
+            }
+            
+            // Add cells for each day
+            for (let day = 1; day <= daysInMonth; day++) {
+                const dayCell = document.createElement('div');
+                dayCell.className = 'calendar-day';
+                dayCell.textContent = day;
+                
+                // Check if today
+                if (isCurrentMonth && day === today.getDate()) {
+                    dayCell.classList.add('today');
+                }
+                
+                // Add event markers if any
+                const dateStr = `${topCalendarYear}-${topCalendarMonth+1}-${day}`;
+                if (state.events[dateStr] && state.events[dateStr].length > 0) {
+                    const markers = document.createElement('div');
+                    markers.className = 'event-markers';
+                    
+                    // Add up to 4 markers
+                    for (let i = 0; i < Math.min(4, state.events[dateStr].length); i++) {
+                        const marker = document.createElement('div');
+                        marker.className = `event-marker event-marker-${i+1}`;
+                        markers.appendChild(marker);
+                    }
+                    
+                    dayCell.appendChild(markers);
+                }
+                
+                // Add click event to create events
+                dayCell.addEventListener('click', function() {
+                    const eventName = prompt('Enter event name:');
+                    if (eventName) {
+                        if (!state.events[dateStr]) {
+                            state.events[dateStr] = [];
+                        }
+                        state.events[dateStr].push(eventName);
+                        saveData();
+                        renderTopCalendar();
+                        showNotification('Event added!');
+                    }
+                });
+                
+                calendarGrid.appendChild(dayCell);
+            }
+        }
+        
+        function setupCalculator() {
+            const display = document.getElementById('calcDisplay');
+            const keys = document.querySelectorAll('.calculator-key');
+            let currentInput = '0';
+            let previousInput = '';
+            let operation = null;
+            let resetOnNextInput = false;
+            
+            keys.forEach(key => {
+                key.addEventListener('click', () => {
+                    const keyValue = key.textContent;
+                    
+                    // Clear button
+                    if (key.classList.contains('key-clear')) {
+                        currentInput = '0';
+                        previousInput = '';
+                        operation = null;
+                        resetOnNextInput = false;
+                        display.textContent = currentInput;
+                        return;
+                    }
+                    
+                    // Percentage button
+                    if (key.classList.contains('key-percent')) {
+                        currentInput = String(parseFloat(currentInput) / 100);
+                        display.textContent = currentInput;
+                        return;
+                    }
+                    
+                    // Number input
+                    if (!isNaN(keyValue) || keyValue === '.') {
+                        if (resetOnNextInput) {
+                            currentInput = '0';
+                            resetOnNextInput = false;
+                        }
+                        
+                        if (keyValue === '.' && currentInput.includes('.')) return;
+                        
+                        if (currentInput === '0' && keyValue !== '.') {
+                            currentInput = keyValue;
+                        } else {
+                            currentInput += keyValue;
+                        }
+                    } 
+                    // Operator input
+                    else if (key.classList.contains('key-operator') && !key.classList.contains('key-equal')) {
+                        if (previousInput !== '') {
+                            currentInput = String(calculate(previousInput, currentInput, operation));
+                        }
+                        previousInput = currentInput;
+                        operation = keyValue;
+                        resetOnNextInput = true;
+                    } 
+                    // Equal button
+                    else if (key.classList.contains('key-equal')) {
+                        if (operation) {
+                            currentInput = String(calculate(previousInput, currentInput, operation));
+                            operation = null;
+                            previousInput = '';
+                        }
+                        resetOnNextInput = true;
+                    }
+                    
+                    display.textContent = currentInput;
+                });
+            });
+            
+            function calculate(a, b, op) {
+                a = parseFloat(a);
+                b = parseFloat(b);
+                
+                switch(op) {
+                    case '+': return a + b;
+                    case '-': return a - b;
+                    case '×': return a * b;
+                    case '÷': return a / b;
+                    default: return b;
+                }
+            }
+        }
+        
+        function initFinancialComponents() {
+            // Set up savings inputs
+            document.getElementById('savingsAmount').addEventListener('change', updateSavingsDisplay);
+            document.getElementById('savingsGoal').addEventListener('change', updateSavingsDisplay);
+            
+            // Set up notes functionality
+            document.getElementById('saveNotes').addEventListener('click', function() {
+                saveFinancialNotes();
+                showNotification('Notes saved!');
+            });
+            
+            document.getElementById('clearNotes').addEventListener('click', function() {
+                if (confirm("Are you sure you want to clear all notes?")) {
+                    document.getElementById('financialNotes').value = "";
+                    saveFinancialNotes();
+                }
+            });
+        }
+        
+        function updateSavingsDisplay() {
+            savingsAmount = parseFloat(document.getElementById('savingsAmount').value) || 0;
+            savingsGoal = parseFloat(document.getElementById('savingsGoal').value) || 0;
+            const percent = savingsGoal > 0 ? Math.round((savingsAmount / savingsGoal) * 100) : 0;
+            
+            // Update modal view
+            document.getElementById('savingsProgressBar').style.width = `${percent}%`;
+            document.getElementById('savingsPercent').textContent = `${percent}% completed`;
+            
+            // Update main view
+            document.getElementById('mainSavingsAmount').textContent = `$${savingsAmount.toLocaleString()} / $${savingsGoal.toLocaleString()}`;
+            document.getElementById('mainSavingsProgressBar').style.width = `${percent}%`;
+            document.getElementById('mainSavingsPercent').textContent = `${percent}% completed`;
+        }
+        
+        function setupGoalManagement() {
+            // Add new goal
+            document.getElementById('addGoal').addEventListener('click', function() {
+                const goalInput = document.getElementById('newGoal');
+                const goalText = goalInput.value.trim();
+                
+                if (goalText) {
+                    const newGoal = {
+                        id: Date.now(),
+                        text: goalText,
+                        completed: false
+                    };
+                    
+                    financialGoals.push(newGoal);
+                    renderGoalsList();
+                    goalInput.value = '';
+                    showNotification('Goal added!');
+                }
+            });
+            
+            // Goal checkbox functionality
+            document.getElementById('goalsList').addEventListener('change', function(e) {
+                if (e.target.classList.contains('goal-checkbox')) {
+                    const goalId = parseInt(e.target.closest('.goal-item').dataset.id);
+                    const goal = financialGoals.find(g => g.id === goalId);
+                    
+                    if (goal) {
+                        goal.completed = e.target.checked;
+                        renderGoalsList();
+                    }
+                }
+            });
+            
+            // Delete goal functionality
+            document.getElementById('goalsList').addEventListener('click', function(e) {
+                if (e.target.closest('.delete-goal')) {
+                    const goalItem = e.target.closest('.goal-item');
+                    const goalId = parseInt(goalItem.dataset.id);
+                    
+                    if (confirm("Are you sure you want to delete this goal?")) {
+                        financialGoals = financialGoals.filter(g => g.id !== goalId);
+                        renderGoalsList();
+                        showNotification('Goal deleted!');
+                    }
+                }
+            });
+            
+            // Add new category
+            document.getElementById('addCategory').addEventListener('click', function() {
+                const categoryInput = document.getElementById('newCategory');
+                const amountInput = document.getElementById('newAmount');
+                const colorInput = document.getElementById('categoryColor');
+                
+                const categoryText = categoryInput.value.trim();
+                const amount = parseFloat(amountInput.value) || 0;
+                
+                if (categoryText) {
+                    const newCategory = {
+                        id: Date.now(),
+                        name: categoryText,
+                        amount: amount,
+                        color: colorInput.value
+                    };
+                    
+                    categories.push(newCategory);
+                    renderCategoriesList();
+                    updatePieChart();
+                    
+                    categoryInput.value = '';
+                    amountInput.value = '';
+                    showNotification('Category added!');
+                }
+            });
+            
+            // Initial render
+            renderGoalsList();
+            renderCategoriesList();
+        }
+        
+        function renderGoalsList() {
+            const goalsList = document.getElementById('goalsList');
+            goalsList.innerHTML = '';
+            
+            financialGoals.forEach(goal => {
+                const goalItem = document.createElement('div');
+                goalItem.className = `goal-item ${goal.completed ? 'completed' : ''}`;
+                goalItem.dataset.id = goal.id;
+                goalItem.innerHTML = `
+                    <input type="checkbox" class="goal-checkbox" ${goal.completed ? 'checked' : ''}>
+                    <div class="goal-text">${goal.text}</div>
+                    <span class="delete-goal"><i class="fas fa-trash"></i></span>
+                `;
+                goalsList.appendChild(goalItem);
+            });
+        }
+        
+        function renderCategoriesList() {
+            const categoriesList = document.getElementById('categoriesList');
+            categoriesList.innerHTML = '';
+            
+            categories.forEach(category => {
+                const categoryItem = document.createElement('div');
+                categoryItem.className = 'category-item';
+                categoryItem.innerHTML = `
+                    <div class="category-color" style="background-color: ${category.color}"></div>
+                    <div class="category-name">${category.name}</div>
+                    <div class="category-amount">$${category.amount.toLocaleString()}</div>
+                    <div class="category-actions">
+                        <span class="delete-goal" data-id="${category.id}"><i class="fas fa-trash"></i></span>
+                    </div>
+                `;
+                categoriesList.appendChild(categoryItem);
+            });
+            
+            // Add delete event for categories
+            document.querySelectorAll('.category-actions .delete-goal').forEach(button => {
+                button.addEventListener('click', function() {
+                    const categoryId = this.getAttribute('data-id');
+                    if (confirm("Are you sure you want to delete this category?")) {
+                        categories = categories.filter(c => c.id != categoryId);
+                        renderCategoriesList();
+                        updatePieChart();
+                        showNotification('Category deleted!');
+                    }
+                });
+            });
+        }
+        
+        function updatePieChart() {
+            if (categories.length === 0) {
+                showPieSkeleton();
+                return;
+            }
+            
+            // Create canvas if needed
+            if (!document.getElementById('financialChart')) {
+                const chartContainer = document.getElementById('chartContainer');
+                chartContainer.innerHTML = '<canvas id="financialChart" height="200"></canvas>';
+                
+                // Reinitialize chart
+                const financialCtx = document.getElementById('financialChart').getContext('2d');
+                financialChart = new Chart(financialCtx, {
+                    type: 'pie',
+                    data: {
+                        labels: [],
+                        datasets: [{
+                            data: [],
+                            backgroundColor: [],
+                            borderWidth: 2,
+                            borderColor: 'var(--cream-100)',
+                            hoverOffset: 10
+                        }]
+                    },
+                    options: {
+                        plugins: {
+                            legend: {
+                                position: 'bottom',
+                                labels: {
+                                    padding: 20,
+                                    usePointStyle: true,
+                                    pointStyle: 'circle'
+                                }
+                            }
+                        }
+                    }
+                });
+            }
+            
+            const labels = categories.map(c => c.name);
+            const data = categories.map(c => c.amount);
+            const colors = categories.map(c => c.color);
+            
+            financialChart.data.labels = labels;
+            financialChart.data.datasets[0].data = data;
+            financialChart.data.datasets[0].backgroundColor = colors;
+            financialChart.update();
+        }
+        
+        function setupTasks() {
+            // Add daily task button
+            document.getElementById('addDailyTask').addEventListener('click', function() {
+                addTask('daily');
+            });
+            
+            // Add weekly task button
+            document.getElementById('addWeeklyTask').addEventListener('click', function() {
+                addTask('weekly');
+            });
+            
+            // Add monthly task button
+            document.getElementById('addMonthlyTask').addEventListener('click', function() {
+                addTask('monthly');
+            });
+            
+            // Render tasks for all views
+            renderTasksForView('daily');
+            renderTasksForView('weekly');
+            renderTasksForView('monthly');
+        }
+        
+        function addTask(type) {
+            // Check task limit
+            if (state.tasks[type].length >= 5) {
+                showNotification(`You can only have 5 ${type} tasks`);
+                return;
+            }
+            
+            const taskId = Date.now();
+            const newTask = {
+                id: taskId,
+                text: `New Task ${state.tasks[type].length + 1}`,
+                details: 'Click to edit task details...',
+                completed: false,
+                reminder: null
+            };
+            
+            state.tasks[type].push(newTask);
+            saveData();
+            renderTasksForView(type);
+            showNotification(`New ${type} task added!`);
+        }
+        
+        function renderTasksForView(type) {
+            const container = document.getElementById(`${type}TasksContainer`);
+            if (!container) return;
+            
+            container.innerHTML = '';
+            
+            state.tasks[type].forEach((task, index) => {
+                const taskElement = document.createElement('div');
+                taskElement.className = 'task-note';
+                taskElement.innerHTML = `
+                    <div class="task-note-header">
+                        <div class="task-note-icon">${index + 1}</div>
+                        <div class="task-note-title" contenteditable="true">${task.text}</div>
+                        <div class="task-checkbox-container">
+                            <input type="checkbox" id="task-${task.id}" ${task.completed ? 'checked' : ''} class="task-checkbox">
+                        </div>
+                        <div class="task-actions">
+                            <span class="action-btn edit-btn" title="Edit Task">
+                                <i class="fas fa-edit"></i>
+                            </span>
+                            <span class="action-btn delete-btn" title="Delete Task" data-id="${task.id}">
+                                <i class="fas fa-trash"></i>
+                            </span>
+                        </div>
+                        <i class="fas fa-bell reminder-bell ${task.reminder ? 'reminder-active' : ''}" data-id="${task.id}"></i>
+                    </div>
+                    <div class="task-note-content" contenteditable="true">${task.details}</div>
+                    <div class="task-note-reminder ${task.reminder ? '' : 'hidden'}" id="reminder-${task.id}">
+                        <span class="reminder-label">Reminder:</span>
+                        ${type === 'daily' ? `
+                            <input type="time" class="reminder-input" value="${task.reminder || '12:00'}">
+                        ` : ''}
+                        ${type === 'weekly' ? `
+                            <select class="reminder-day-select">
+                                <option value="0" ${task.reminder && task.reminder.day === 0 ? 'selected' : ''}>Sun</option>
+                                <option value="1" ${task.reminder && task.reminder.day === 1 ? 'selected' : ''}>Mon</option>
+                                <option value="2" ${task.reminder && task.reminder.day === 2 ? 'selected' : ''}>Tue</option>
+                                <option value="3" ${task.reminder && task.reminder.day === 3 ? 'selected' : ''}>Wed</option>
+                                <option value="4" ${task.reminder && task.reminder.day === 4 ? 'selected' : ''}>Thu</option>
+                                <option value="5" ${task.reminder && task.reminder.day === 5 ? 'selected' : ''}>Fri</option>
+                                <option value="6" ${task.reminder && task.reminder.day === 6 ? 'selected' : ''}>Sat</option>
+                            </select>
+                            <input type="time" class="reminder-input" value="${task.reminder ? task.reminder.time : '12:00'}">
+                        ` : ''}
+                        ${type === 'monthly' ? `
+                            <input type="number" class="reminder-input" min="1" max="31" placeholder="Date" value="${task.reminder ? task.reminder.date : ''}">
+                            <input type="time" class="reminder-input" value="${task.reminder ? task.reminder.time : '12:00'}">
+                        ` : ''}
+                        <div class="reminder-set-btn" data-id="${task.id}">Set</div>
+                    </div>
+                `;
+                
+                // Title edit event
+                const titleElement = taskElement.querySelector('.task-note-title');
+                titleElement.addEventListener('blur', function() {
+                    task.text = this.textContent;
+                    saveData();
+                    showNotification('Task updated!');
+                });
+                
+                // Content edit event
+                const contentElement = taskElement.querySelector('.task-note-content');
+                contentElement.addEventListener('blur', function() {
+                    task.details = this.textContent;
+                    saveData();
+                });
+                
+                // Checkbox event
+                const checkbox = taskElement.querySelector('.task-checkbox');
+                checkbox.addEventListener('change', function() {
+                    task.completed = this.checked;
+                    saveData();
+                    if (task.completed) {
+                        showNotification(`Task completed: "${task.text}"`);
+                    }
+                });
+                
+                // Delete button event
+                const deleteBtn = taskElement.querySelector('.delete-btn');
+                deleteBtn.addEventListener('click', function() {
+                    if (confirm("Are you sure you want to delete this task?")) {
+                        state.tasks[type] = state.tasks[type].filter(t => t.id !== task.id);
+                        saveData();
+                        renderTasksForView(type);
+                        showNotification('Task deleted!');
+                    }
+                });
+                
+                // Reminder bell event
+                const bell = taskElement.querySelector('.reminder-bell');
+                bell.addEventListener('click', function() {
+                    const reminderContainer = taskElement.querySelector(`#reminder-${task.id}`);
+                    reminderContainer.classList.toggle('hidden');
+                    
+                    if (!reminderContainer.classList.contains('hidden')) {
+                        this.classList.add('reminder-active');
+                    } else if (!task.reminder) {
+                        this.classList.remove('reminder-active');
+                    }
+                });
+                
+                // Set reminder event
+                const setBtn = taskElement.querySelector('.reminder-set-btn');
+                setBtn.addEventListener('click', function() {
+                    if (type === 'daily') {
+                        const time = taskElement.querySelector('.reminder-input').value;
+                        if (time) {
+                            task.reminder = time;
+                            bell.classList.add('reminder-active');
+                        }
+                    } else if (type === 'weekly') {
+                        const day = parseInt(taskElement.querySelector('.reminder-day-select').value);
+                        const time = taskElement.querySelector('.reminder-input').value;
+                        if (time) {
+                            task.reminder = { day, time };
+                            bell.classList.add('reminder-active');
+                        }
+                    } else if (type === 'monthly') {
+                        const date = parseInt(taskElement.querySelector('input[type="number"]').value);
+                        const time = taskElement.querySelector('input[type="time"]').value;
+                        if (date && time) {
+                            task.reminder = { date, time };
+                            bell.classList.add('reminder-active');
+                        }
+                    }
+                    
+                    saveData();
+                    showNotification('Reminder set!');
+                });
+                
+                container.appendChild(taskElement);
+            });
+        }
+        
+        function checkReminders() {
+            const now = new Date();
+            const currentHour = now.getHours();
+            const currentMinute = now.getMinutes();
+            const currentDay = now.getDay();
+            const currentDate = now.getDate();
+            
+            // Check daily tasks
+            state.tasks.daily.forEach(task => {
+                if (task.reminder && !task.completed) {
+                    const [hours, minutes] = task.reminder.split(':').map(Number);
+                    if (currentHour === hours && currentMinute === minutes) {
+                        showNotification(`Reminder: "${task.text}" is due now!`);
+                        // Animate bell
+                        const bell = document.querySelector(`.reminder-bell[data-id="${task.id}"]`);
+                        if (bell) {
+                            bell.classList.add('reminder-active');
+                            setTimeout(() => bell.classList.remove('reminder-active'), 2000);
+                        }
+                    }
+                }
+            });
+            
+            // Check weekly tasks
+            state.tasks.weekly.forEach(task => {
+                if (task.reminder && !task.completed && currentDay === task.reminder.day) {
+                    const [hours, minutes] = task.reminder.time.split(':').map(Number);
+                    if (currentHour === hours && currentMinute === minutes) {
+                        showNotification(`Reminder: "${task.text}" is due now!`);
+                        // Animate bell
+                        const bell = document.querySelector(`.reminder-bell[data-id="${task.id}"]`);
+                        if (bell) {
+                            bell.classList.add('reminder-active');
+                            setTimeout(() => bell.classList.remove('reminder-active'), 2000);
+                        }
+                    }
+                }
+            });
+            
+            // Check monthly tasks
+            state.tasks.monthly.forEach(task => {
+                if (task.reminder && !task.completed && currentDate === task.reminder.date) {
+                    const [hours, minutes] = task.reminder.time.split(':').map(Number);
+                    if (currentHour === hours && currentMinute === minutes) {
+                        showNotification(`Reminder: "${task.text}" is due now!`);
+                        // Animate bell
+                        const bell = document.querySelector(`.reminder-bell[data-id="${task.id}"]`);
+                        if (bell) {
+                            bell.classList.add('reminder-active');
+                            setTimeout(() => bell.classList.remove('reminder-active'), 2000);
+                        }
+                    }
+                }
+            });
+        }
+        
+        function saveFinancialNotes() {
+            financialNotes = document.getElementById('financialNotes').value;
+            localStorage.setItem('financialNotes', financialNotes);
+        }
+        
+        function loadSavedNotes() {
+            const savedNotes = localStorage.getItem('financialNotes');
+            if (savedNotes) {
+                document.getElementById('financialNotes').value = savedNotes;
+            }
+        }
+        
+        function setupNotesSaving() {
+            // Financial notes
+            document.getElementById('saveNotes').addEventListener('click', function() {
+                saveFinancialNotes();
+                showNotification('Financial notes saved!');
+            });
+            
+            // Reflective notes
+            document.getElementById('saveReflectiveNotes').addEventListener('click', function() {
+                state.notes = document.getElementById('notesArea').value;
+                saveData();
+                showNotification('Reflective notes saved!');
+            });
+        }
+
+        function setupPhotoUpload() {
+            document.getElementById('photoUpload').addEventListener('click', function() {
+                document.getElementById('photoInput').click();
+            });
+            
+            document.getElementById('photoInput').addEventListener('change', function(e) {
+                const file = e.target.files[0];
+                if (file) {
+                    const reader = new FileReader();
+                    reader.onload = function(e) {
+                        const preview = document.getElementById('photoPreview');
+                        preview.src = e.target.result;
+                        preview.style.display = 'block';
+                        
+                        // Hide the upload icon and text
+                        const icon = document.querySelector('#photoUpload .fa-cloud-upload-alt');
+                        const text = document.querySelector('#photoUpload p');
+                        if (icon) icon.style.display = 'none';
+                        if (text) text.style.display = 'none';
+                        
+                        // Add delete button
+                        if (!document.getElementById('deletePhotoBtn')) {
+                            const deleteBtn = document.createElement('button');
+                            deleteBtn.id = 'deletePhotoBtn';
+                            deleteBtn.className = 'btn btn-outline mt-3';
+                            deleteBtn.innerHTML = '<i class="fas fa-trash mr-2"></i>Remove Photo';
+                            deleteBtn.addEventListener('click', function() {
+                                preview.style.display = 'none';
+                                document.getElementById('photoInput').value = '';
+                                if (icon) icon.style.display = 'block';
+                                if (text) text.style.display = 'block';
+                                deleteBtn.remove();
+                            });
+                            document.getElementById('photoUpload').appendChild(deleteBtn);
+                        }
+                    }
+                    reader.readAsDataURL(file);
+                }
+            });
+        }
+        
+        function setupHydrationTracker() {
+            document.querySelectorAll('.water-bottle').forEach((bottle, index) => {
+                bottle.addEventListener('click', function() {
+                    state.hydration[index] = !state.hydration[index];
+                    this.classList.toggle('completed');
+                    saveData();
+                    showNotification(`Water bottle ${index + 1} ${state.hydration[index] ? 'completed' : 'incomplete'}`);
+                });
+                
+                // Set initial state
+                if (state.hydration[index]) {
+                    bottle.classList.add('completed');
+                }
+            });
+        }
+
+        // Dark Mode Toggle
+        const themeToggle = document.getElementById('themeToggle');
+        const themeIcon = document.getElementById('themeIcon');
+        
+        themeToggle.addEventListener('click', () => {
+            document.body.classList.toggle('dark-mode');
+            
+            if(document.body.classList.contains('dark-mode')) {
+                themeIcon.classList.remove('fa-moon');
+                themeIcon.classList.add('fa-sun');
+            } else {
+                themeIcon.classList.remove('fa-sun');
+                themeIcon.classList.add('fa-moon');
+            }
+        });
+        
+        // Pomodoro Timer
+        let timerInterval;
+        let timerRunning = false;
+        let timerSeconds = 25 * 60;
+        
+        function updateTimerDisplay() {
+            const minutes = Math.floor(timerSeconds / 60);
+            const seconds = timerSeconds % 60;
+            document.getElementById('timerDisplay').textContent = 
+                `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+        }
+        
+        function startTimer() {
+            if(timerRunning) return;
+            
+            timerRunning = true;
+            timerInterval = setInterval(() => {
+                timerSeconds--;
+                updateTimerDisplay();
+                
+                if(timerSeconds <= 0) {
+                    clearInterval(timerInterval);
+                    timerRunning = false;
+                    document.getElementById('timerDisplay').classList.add('text-red-500');
+                    showNotification('Timer completed! Take a break.');
+                    
+                    // Trigger confetti
+                    confetti({
+                        particleCount: 150,
+                        spread: 70,
+                        origin: { y: 0.6 }
+                    });
+                }
+            }, 1000);
+        }
+        
+        function resetTimer(minutes = 25) {
+            clearInterval(timerInterval);
+            timerRunning = false;
+            timerSeconds = minutes * 60;
+            updateTimerDisplay();
+            document.getElementById('timerDisplay').classList.remove('text-red-500');
+        }
+        
+        document.getElementById('startTimer').addEventListener('click', startTimer);
+        document.getElementById('resetTimer').addEventListener('click', () => resetTimer(25));
+        
+        document.querySelectorAll('.timer-preset').forEach(button => {
+            button.addEventListener('click', function() {
+                const minutes = parseInt(this.getAttribute('data-minutes'));
+                resetTimer(minutes);
+            });
+        });
+        
+        // Set custom timer
+        document.getElementById('setCustomTimer').addEventListener('click', function() {
+            const minutes = parseInt(document.getElementById('customMinutes').value);
+            if (!isNaN(minutes) && minutes > 0) {
+                resetTimer(minutes);
+                showNotification(`Custom timer set to ${minutes} minutes`);
+            }
+        });
+
+        updateTimerDisplay();
+        
+        // Financial goals modal
+        document.getElementById('financialGoals').addEventListener('click', function() {
+            document.getElementById('financialModal').style.display = 'flex';
+        });
+        
+        document.getElementById('closeModal').addEventListener('click', function() {
+            document.getElementById('financialModal').style.display = 'none';
+        });
+        
+        // Habit Dashboard Initialization
+        function initHabitDashboard() {
+            // Set up habit adding
+            document.getElementById('addHabitBtn').addEventListener('click', addNewHabit);
+            
+            // Set up habit month navigation
+            document.getElementById('prevMonthBtn').addEventListener('click', function() {
+                habitMonth--;
+                if (habitMonth < 0) {
+                    habitMonth = 11;
+                    habitYear--;
+                }
+                updateHabitMonthDisplay();
+                renderHabitGrid();
+                updateHabitChart();
+            });
+            
+            document.getElementById('nextMonthBtn').addEventListener('click', function() {
+                habitMonth++;
+                if (habitMonth > 11) {
+                    habitMonth = 0;
+                    habitYear++;
+                }
+                updateHabitMonthDisplay();
+                renderHabitGrid();
+                updateHabitChart();
+            });
+            
+            // Render all components
+            updateHabitMonthDisplay();
+            renderHabitGrid();
+            
+            // Set notes content
+            document.getElementById('notesArea').value = state.notes;
+        }
+        
+        function updateHabitMonthDisplay() {
+            const monthNames = ["January", "February", "March", "April", "May", "June",
+                              "July", "August", "September", "October", "November", "December"];
+            document.getElementById('currentHabitMonth').textContent = 
+                `${monthNames[habitMonth]} ${habitYear}`;
+        }
+        
+        function addNewHabit() {
+            const habitInput = document.getElementById('habitInput');
+            const habitName = habitInput.value.trim();
+            
+            if (habitName) {
+                // Create habit with days for current month
+                const daysInMonth = new Date(habitYear, habitMonth + 1, 0).getDate();
+                state.habits.push({ 
+                    id: Date.now(),
+                    name: habitName, 
+                    days: Array(daysInMonth).fill(false)
+                });
+                habitInput.value = '';
+                saveData();
+                renderHabitGrid();
+                updateHabitChart();
+                showNotification('Habit added successfully!');
+            }
+        }
+        
+        function renderHabitGrid() {
+            const grid = document.getElementById('habitGrid');
+            grid.innerHTML = '';
+            
+            // Get days in current month
+            const daysInMonth = new Date(habitYear, habitMonth + 1, 0).getDate();
+            
+            // Single-letter day headers
+            const dayInitials = ['S', 'M', 'T', 'W', 'T', 'F', 'S'];
+            
+            // Create header row with days
+            const headerRow = document.createElement('div');
+            headerRow.className = 'grid-header';
+            headerRow.style.gridColumn = '1';
+            headerRow.textContent = 'Habits';
+            grid.appendChild(headerRow);
+            
+            // Add day headers (rectangular) with single letters
+            for (let i = 1; i <= daysInMonth; i++) {
+                const dayHeader = document.createElement('div');
+                dayHeader.className = 'grid-header';
+                const dayOfWeek = new Date(habitYear, habitMonth, i).getDay();
+                dayHeader.innerHTML = `
+                    <div>${i}</div>
+                    <div class="day-initial">${dayInitials[dayOfWeek]}</div>
+                `;
+                grid.appendChild(dayHeader);
+            }
+            
+            // Add habit rows
+            state.habits.forEach((habit, habitIndex) => {
+                // Habit name cell
+                const habitCell = document.createElement('div');
+                habitCell.className = 'habit-row-header';
+                habitCell.innerHTML = `
+                    ${habit.name}
+                    <div class="habit-actions">
+                        <span class="action-btn edit-btn" data-id="${habit.id}">
+                            <i class="fas fa-edit"></i>
+                        </span>
+                        <span class="action-btn delete-btn" data-id="${habit.id}">
+                            <i class="fas fa-trash"></i>
+                        </span>
+                    </div>
+                `;
+                grid.appendChild(habitCell);
+                
+                // Habit day cells (square checkboxes)
+                for (let dayIndex = 0; dayIndex < daysInMonth; dayIndex++) {
+                    const completed = habit.days[dayIndex] || false;
+                    
+                    const dayCell = document.createElement('div');
+                    dayCell.className = `grid-cell ${completed ? 'checked' : ''}`;
+                    dayCell.addEventListener('click', () => {
+                        state.habits[habitIndex].days[dayIndex] = !completed;
+                        saveData();
+                        renderHabitGrid();
+                        updateHabitChart();
+                        showNotification(completed ? 
+                            `Marked "${habit.name}" as incomplete for day ${dayIndex + 1}` : 
+                            `Marked "${habit.name}" as complete for day ${dayIndex + 1}`);
+                    });
+                    
+                    grid.appendChild(dayCell);
+                }
+            });
+            
+            // Add event listeners for habit actions
+            document.querySelectorAll('.habit-actions .edit-btn').forEach(btn => {
+                btn.addEventListener('click', function(e) {
+                    e.stopPropagation();
+                    const habitId = this.getAttribute('data-id');
+                    const habit = state.habits.find(h => h.id == habitId);
+                    const newName = prompt('Edit habit name:', habit.name);
+                    if (newName && newName.trim() !== '') {
+                        habit.name = newName.trim();
+                        saveData();
+                        renderHabitGrid();
+                        showNotification('Habit updated!');
+                    }
+                });
+            });
+            
+            document.querySelectorAll('.habit-actions .delete-btn').forEach(btn => {
+                btn.addEventListener('click', function(e) {
+                    e.stopPropagation();
+                    const habitId = this.getAttribute('data-id');
+                    if (confirm('Are you sure you want to delete this habit?')) {
+                        state.habits = state.habits.filter(h => h.id != habitId);
+                        saveData();
+                        renderHabitGrid();
+                        updateHabitChart();
+                        showNotification('Habit deleted!');
+                    }
+                });
+            });
+        }
+        
+        function setupTopCalendarEvents() {
+            document.getElementById('topPrevMonthBtn').addEventListener('click', function() {
+                topCalendarMonth--;
+                if (topCalendarMonth < 0) {
+                    topCalendarMonth = 11;
+                    topCalendarYear--;
+                }
+                renderTopCalendar();
+            });
+            
+            document.getElementById('topNextMonthBtn').addEventListener('click', function() {
+                topCalendarMonth++;
+                if (topCalendarMonth > 11) {
+                    topCalendarMonth = 0;
+                    topCalendarYear++;
+                }
+                renderTopCalendar();
+            });
+        }
+        
+        function showNotification(message) {
+            const notification = document.getElementById('notification');
+            const messageElement = document.getElementById('notificationMessage');
+            
+            messageElement.textContent = message;
+            notification.classList.add('show');
+            
+            setTimeout(() => {
+                notification.classList.remove('show');
+            }, 3000);
+        }
+        
+        document.addEventListener('DOMContentLoaded', function() {
+            initApp();
+        });
+    </script>
+</body>
+</html>
