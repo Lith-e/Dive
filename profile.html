@@ -938,8 +938,24 @@
         const themeIcon = document.getElementById('themeIcon');
         const notification = document.getElementById('notification');
         
+        // Form elements
+        const loginUsername = document.getElementById('loginUsername');
+        const loginPassword = document.getElementById('loginPassword');
+        const signupUsername = document.getElementById('signupUsername');
+        const signupEmail = document.getElementById('signupEmail');
+        const signupPassword = document.getElementById('signupPassword');
+        const signupConfirmPassword = document.getElementById('signupConfirmPassword');
+        const displayName = document.getElementById('displayName');
+        const userBio = document.getElementById('userBio');
+        const userEmail = document.getElementById('userEmail');
+        
         // Initialize the app
         function initApp() {
+            // Initialize users storage if doesn't exist
+            if (!localStorage.getItem('litheUsers')) {
+                localStorage.setItem('litheUsers', JSON.stringify([]));
+            }
+            
             // Load user data from localStorage
             loadUserData();
             
@@ -961,7 +977,16 @@
         // Save user data to localStorage
         function saveUserData() {
             if (currentUser) {
+                // Update current user in localStorage
                 localStorage.setItem('litheUser', JSON.stringify(currentUser));
+                
+                // Update the user in the users array
+                const users = JSON.parse(localStorage.getItem('litheUsers') || '[]');
+                const index = users.findIndex(u => u.id === currentUser.id);
+                if (index !== -1) {
+                    users[index] = currentUser;
+                    localStorage.setItem('litheUsers', JSON.stringify(users));
+                }
             }
         }
         
@@ -971,24 +996,24 @@
                 // Update profile elements
                 document.getElementById('profileName').textContent = currentUser.displayName || currentUser.username;
                 document.getElementById('profileBio').textContent = currentUser.bio || 'Productivity enthusiast';
-                document.getElementById('displayName').value = currentUser.displayName || currentUser.username;
-                document.getElementById('userBio').value = currentUser.bio || '';
-                document.getElementById('userEmail').value = currentUser.email || '';
+                displayName.value = currentUser.displayName || currentUser.username;
+                userBio.value = currentUser.bio || '';
+                userEmail.value = currentUser.email || '';
                 
                 // Update stats
                 document.getElementById('habitsCount').textContent = currentUser.habitsCount || 0;
                 document.getElementById('tasksCount').textContent = currentUser.tasksCount || 0;
                 document.getElementById('connectionsCount').textContent = currentUser.connectionsCount || 0;
                 
-                // Update profile avatar - FIXED
+                // Update profile avatar
                 if (currentUser.avatar) {
                     document.getElementById('profileAvatar').style.backgroundImage = `url(${currentUser.avatar})`;
-                    document.getElementById('profileCircle').style.backgroundImage = `url(${currentUser.avatar})`;
-                    document.getElementById('profileCircle').innerHTML = '';
+                    profileCircle.style.backgroundImage = `url(${currentUser.avatar})`;
+                    profileCircle.innerHTML = '';
                 } else {
                     document.getElementById('profileAvatar').style.backgroundImage = '';
-                    document.getElementById('profileCircle').style.backgroundImage = '';
-                    document.getElementById('profileCircle').innerHTML = '<i class="fas fa-user"></i>';
+                    profileCircle.style.backgroundImage = '';
+                    profileCircle.innerHTML = '<i class="fas fa-user"></i>';
                 }
                 
                 // Update visibility preferences
@@ -1042,21 +1067,26 @@
                 document.getElementById('avatarUpload').click();
             });
             
-            // Avatar file input change - FIXED
+            // Avatar file input change
             document.getElementById('avatarUpload').addEventListener('change', (e) => {
                 const file = e.target.files[0];
-                if (file) {
-                    const reader = new FileReader();
-                    reader.onload = function(event) {
-                        // Store the base64 data
-                        avatarData = event.target.result;
-                        document.getElementById('avatarPreview').style.backgroundImage = `url(${avatarData})`;
-                    };
-                    reader.readAsDataURL(file);
+                if (!file) return;
+                
+                // Check file size (max 2MB)
+                if (file.size > 2 * 1024 * 1024) {
+                    showNotification('Image too large. Max 2MB allowed.');
+                    return;
                 }
+                
+                const reader = new FileReader();
+                reader.onload = function(event) {
+                    avatarData = event.target.result;
+                    document.getElementById('avatarPreview').style.backgroundImage = `url(${avatarData})`;
+                };
+                reader.readAsDataURL(file);
             });
             
-            // Save avatar button - FIXED
+            // Save avatar button
             saveAvatarBtn.addEventListener('click', () => {
                 if (currentUser && avatarData) {
                     currentUser.avatar = avatarData;
@@ -1064,6 +1094,9 @@
                     updateUI();
                     showNotification('Profile picture updated!');
                     closeModal(avatarModal);
+                    
+                    // Notify other tabs
+                    window.dispatchEvent(new Event('storage'));
                 } else {
                     showNotification('Please select an image first');
                 }
@@ -1097,8 +1130,8 @@
         
         // Login function
         function login() {
-            const username = document.getElementById('loginUsername').value;
-            const password = document.getElementById('loginPassword').value;
+            const username = loginUsername.value;
+            const password = loginPassword.value;
             
             if (!username || !password) {
                 showNotification('Please enter both username and password');
@@ -1121,10 +1154,10 @@
         
         // Signup function
         function signup() {
-            const username = document.getElementById('signupUsername').value;
-            const email = document.getElementById('signupEmail').value;
-            const password = document.getElementById('signupPassword').value;
-            const confirmPassword = document.getElementById('signupConfirmPassword').value;
+            const username = signupUsername.value;
+            const email = signupEmail.value;
+            const password = signupPassword.value;
+            const confirmPassword = signupConfirmPassword.value;
             
             if (!username || !password) {
                 showNotification('Username and password are required');
@@ -1177,6 +1210,7 @@
             localStorage.removeItem('litheUser');
             updateUI();
             showNotification('You have been logged out');
+            showModal(loginModal);
         }
         
         // Save profile function
@@ -1184,9 +1218,9 @@
             if (!currentUser) return;
             
             // Update user data
-            currentUser.displayName = document.getElementById('displayName').value;
-            currentUser.bio = document.getElementById('userBio').value;
-            currentUser.email = document.getElementById('userEmail').value;
+            currentUser.displayName = displayName.value;
+            currentUser.bio = userBio.value;
+            currentUser.email = userEmail.value;
             
             // Update visibility preferences
             currentUser.visibility = {
@@ -1260,29 +1294,30 @@
                     } else {
                         reject(new Error('Invalid username or password'));
                     }
-                }, 1000);
+                }, 500);
             });
         }
         
         // Simulated API call to create user
-        function createUser(user) {
+        function createUser(newUser) {
             return new Promise((resolve, reject) => {
                 // Simulate API request delay
                 setTimeout(() => {
                     const users = JSON.parse(localStorage.getItem('litheUsers') || '[]');
                     
                     // Check if username already exists
-                    if (users.some(u => u.username === user.username)) {
+                    if (users.some(u => u.username === newUser.username)) {
                         reject(new Error('Username already exists'));
                         return;
                     }
                     
                     // Add new user
-                    users.push(user);
+                    users.push(newUser);
                     localStorage.setItem('litheUsers', JSON.stringify(users));
+                    localStorage.setItem('litheUser', JSON.stringify(newUser));
                     
-                    resolve(user);
-                }, 1000);
+                    resolve(newUser);
+                }, 500);
             });
         }
         
