@@ -1510,6 +1510,249 @@
         body.dark-mode .scrollable-container::-webkit-scrollbar-thumb {
             background: var(--emerald);
         }
+
+        /* New Reminder System */
+        .reminder-list {
+            margin-top: 20px;
+            background-color: var(--cream-100);
+            border-radius: 12px;
+            padding: 15px;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+        
+        body.dark-mode .reminder-list {
+            background-color: var(--charcoal-900);
+        }
+        
+        .reminder-item {
+            display: flex;
+            align-items: center;
+            padding: 10px;
+            border-bottom: 1px solid var(--cream-200);
+        }
+        
+        .reminder-item:last-child {
+            border-bottom: none;
+        }
+        
+        .reminder-icon {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background-color: var(--emerald);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 12px;
+        }
+        
+        .reminder-content {
+            flex: 1;
+        }
+        
+        .reminder-title {
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+        
+        .reminder-time-display {
+            font-size: 0.85rem;
+            color: var(--cream-400);
+        }
+        
+        .reminder-actions {
+            display: flex;
+            gap: 8px;
+        }
+        
+        /* System Notification Styling */
+        .system-notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background-color: white;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+            padding: 15px 20px;
+            display: flex;
+            align-items: center;
+            z-index: 10000;
+            max-width: 350px;
+            transform: translateX(120%);
+            transition: transform 0.4s ease;
+        }
+        
+        .system-notification.show {
+            transform: translateX(0);
+        }
+        
+        .notification-icon {
+            width: 36px;
+            height: 36px;
+            background-color: var(--emerald);
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 15px;
+            font-size: 18px;
+        }
+        
+        .notification-content {
+            flex: 1;
+        }
+        
+        .notification-title {
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+        
+        .notification-message {
+            font-size: 0.9rem;
+            color: #666;
+        }
+        
+        .notification-close {
+            margin-left: 10px;
+            cursor: pointer;
+            color: #999;
+        }
+        
+        /* Profile image styling */
+        .profile-image-container {
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .profile-placeholder {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-color: var(--cream-300);
+            color: var(--charcoal-800);
+        }
+        
+        /* Login Modal */
+        .login-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.7);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 2000;
+            display: none;
+        }
+        
+        .login-content {
+            background: var(--cream-100);
+            border-radius: 20px;
+            width: 90%;
+            max-width: 400px;
+            padding: 30px;
+            position: relative;
+        }
+        
+        body.dark-mode .login-content {
+            background: var(--charcoal-900);
+        }
+        
+        .login-header {
+            font-size: 1.8rem;
+            font-family: 'Playfair Display', serif;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        
+        .login-tabs {
+            display: flex;
+            margin-bottom: 20px;
+            border-bottom: 1px solid var(--cream-200);
+        }
+        
+        .login-tab {
+            flex: 1;
+            padding: 12px;
+            text-align: center;
+            cursor: pointer;
+            font-weight: 500;
+            border-bottom: 3px solid transparent;
+        }
+        
+        .login-tab.active {
+            border-bottom: 3px solid var(--emerald);
+            color: var(--emerald);
+        }
+        
+        .login-form {
+            display: none;
+        }
+        
+        .login-form.active {
+            display: block;
+        }
+        
+        .login-input {
+            width: 100%;
+            padding: 12px 15px;
+            margin-bottom: 15px;
+            border-radius: 12px;
+            border: 1px solid var(--cream-300);
+            background: var(--cream-50);
+            font-size: 1rem;
+        }
+        
+        body.dark-mode .login-input {
+            background: var(--charcoal-900);
+            border-color: var(--charcoal-700);
+            color: var(--cream-100);
+        }
+        
+        .login-btn {
+            width: 100%;
+            padding: 12px;
+            border-radius: 12px;
+            background-color: var(--emerald);
+            color: white;
+            font-weight: 500;
+            border: none;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+        
+        .login-footer {
+            text-align: center;
+            margin-top: 20px;
+            font-size: 0.9rem;
+        }
+        
+        .login-footer a {
+            color: var(--emerald);
+            text-decoration: none;
+            font-weight: 500;
+        }
+        .logo-icon {
+            width: 28px;
+            height: 28px;
+            object-fit: contain;
+            margin-right: 8px:
+            vertical-align: middle;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            border-radius: 6px;
+        }
     </style>
 </head>
 <body>
@@ -1520,6 +1763,53 @@
     <div id="notification" class="notification">
         <i class="fas fa-check-circle mr-2"></i>
         <span id="notificationMessage">Habit updated successfully!</span>
+    </div>
+    
+    <!-- System Notification -->
+    <div id="systemNotification" class="system-notification">
+        <div class="notification-icon">
+            <i class="fas fa-bell"></i>
+        </div>
+        <div class="notification-content">
+            <div class="notification-title" id="notificationTitle">Reminder</div>
+            <div class="notification-message" id="notificationText">Your task is due now!</div>
+        </div>
+        <div class="notification-close" id="closeNotification">
+            <i class="fas fa-times"></i>
+        </div>
+    </div>
+
+    <!-- Login Modal -->
+    <div class="login-modal" id="loginModal">
+        <div class="login-content">
+            <span class="close-modal" id="closeLoginModal">&times;</span>
+            <h2 class="login-header">Welcome to Lithe</h2>
+            
+            <div class="login-tabs">
+                <div class="login-tab active" data-tab="login">Login</div>
+                <div class="login-tab" data-tab="signup">Sign Up</div>
+            </div>
+            
+            <div id="loginForm" class="login-form active">
+                <input type="text" id="loginUsername" class="login-input" placeholder="Username">
+                <input type="password" id="loginPassword" class="login-input" placeholder="Password">
+                <button class="login-btn" id="loginBtn">Log In</button>
+                <div class="login-footer">
+                    Don't have an account? <a href="#" id="switchToSignup">Sign Up</a>
+                </div>
+            </div>
+            
+            <div id="signupForm" class="login-form">
+                <input type="text" id="signupUsername" class="login-input" placeholder="Username">
+                <input type="email" id="signupEmail" class="login-input" placeholder="Email">
+                <input type="password" id="signupPassword" class="login-input" placeholder="Password">
+                <input type="password" id="signupConfirmPassword" class="login-input" placeholder="Confirm Password">
+                <button class="login-btn" id="signupBtn">Create Account</button>
+                <div class="login-footer">
+                    Already have an account? <a href="#" id="switchToLogin">Log In</a>
+                </div>
+            </div>
+        </div>
     </div>
 
     <!-- Financial Goals Modal -->
@@ -1612,8 +1902,8 @@
     <header>
         <div class="header-content">
             <div class="logo-container">
-                <i class="fas fa-water coral-icon"></i>
-                <div class="app-name">Lithe</div>
+                <img src="logo.png" class="logo-icon"/>
+                <div class="app-name">Dive</div>
             </div>
 
             <div class="datetime-container">
@@ -1621,9 +1911,13 @@
                 <div class="current-date" id="currentDate">Monday, August 5, 2025</div>
             </div>
 
-            <a href="profile.html" class="profile-circle" id="profileCircle">
-                <i class="fas fa-user"></i>
-            </a>
+            <div class="profile-circle" id="profileCircle">
+                <div class="profile-image-container">
+                    <div class="profile-placeholder">
+                        <i class="fas fa-user"></i>
+                    </div>
+                </div>
+            </div>
         </div>
     </header>
 
@@ -1816,6 +2110,18 @@
                         </div>
                     </div>
                     
+                    <!-- Upcoming Reminders Section -->
+                    <div class="card p-6">
+                        <h3 class="font-serif font-bold mb-4">Upcoming Reminders</h3>
+                        <div class="reminder-list" id="upcomingReminders">
+                            <!-- Reminders will be added here dynamically -->
+                            <div class="text-center py-10 text-cream-400">
+                                <i class="fas fa-bell-slash text-3xl mb-3"></i>
+                                <p>No upcoming reminders</p>
+                            </div>
+                        </div>
+                    </div>
+                    
                     <!-- Health Metrics Section -->
                     <div class="health-metrics">
                         <div class="metric-card">
@@ -1928,7 +2234,7 @@
                 weight: 65,
                 walk: 3.5
             },
-            profileImage: null
+            reminders: []
         };
         
         // Financial data
@@ -1952,10 +2258,17 @@
         let topCalendarYear = 2025;
         let topSelectedDate = new Date();
         
+        // User state
+        let currentUser = null;
+        let avatarData = null;
+        
         // Initialize app
         function initApp() {
             // Load saved data
             loadData();
+            
+            // Update profile image
+            loadProfileImage();
             
             // Update clock and date
             updateDateTime();
@@ -2003,18 +2316,39 @@
             // Check for reminders every minute
             setInterval(checkReminders, 60000);
             
-            // Load profile image
-            loadProfileImage();
+            // Request notification permission
+            if ('Notification' in window) {
+                Notification.requestPermission();
+            }
+            
+            // Set up login functionality
+            setupLogin();
         }
         
         // Load profile image
         function loadProfileImage() {
+            const savedUser = localStorage.getItem('litheUser');
             const profileCircle = document.getElementById('profileCircle');
-            if (state.profileImage) {
-                profileCircle.innerHTML = `<img src="${state.profileImage}" alt="Profile" id="profileImage">`;
-            } else {
-                profileCircle.innerHTML = '<i class="fas fa-user"></i>';
+            
+            if (savedUser) {
+                const user = JSON.parse(savedUser);
+                if (user.avatar) {
+                    profileCircle.innerHTML = `
+                        <div class="profile-image-container">
+                            <img src="${user.avatar}" alt="Profile">
+                        </div>
+                    `;
+                    return;
+                }
             }
+            
+            profileCircle.innerHTML = `
+                <div class="profile-image-container">
+                    <div class="profile-placeholder">
+                        <i class="fas fa-user"></i>
+                    </div>
+                </div>
+            `;
         }
         
         // Save all app data to localStorage
@@ -2634,6 +2968,9 @@
             renderTasksForView('daily');
             renderTasksForView('weekly');
             renderTasksForView('monthly');
+            
+            // Render reminders
+            renderUpcomingReminders();
         }
         
         function addTask(type) {
@@ -2655,6 +2992,7 @@
             state.tasks[type].push(newTask);
             saveData();
             renderTasksForView(type);
+            renderUpcomingReminders();
             showNotification(`New ${type} task added!`);
         }
         
@@ -2733,6 +3071,7 @@
                     if (task.completed) {
                         showNotification(`Task completed: "${task.text}"`);
                     }
+                    renderUpcomingReminders();
                 });
                 
                 // Delete button event
@@ -2742,6 +3081,7 @@
                         state.tasks[type] = state.tasks[type].filter(t => t.id !== task.id);
                         saveData();
                         renderTasksForView(type);
+                        renderUpcomingReminders();
                         showNotification('Task deleted!');
                     }
                 });
@@ -2785,10 +3125,142 @@
                     }
                     
                     saveData();
+                    renderUpcomingReminders();
                     showNotification('Reminder set!');
                 });
                 
                 container.appendChild(taskElement);
+            });
+        }
+        
+        // Render upcoming reminders in the list
+        function renderUpcomingReminders() {
+            const container = document.getElementById('upcomingReminders');
+            container.innerHTML = '';
+            
+            // Collect all reminders
+            let allReminders = [];
+            const now = new Date();
+            
+            // Process daily tasks
+            state.tasks.daily.forEach(task => {
+                if (task.reminder && !task.completed) {
+                    const [hours, minutes] = task.reminder.split(':').map(Number);
+                    const reminderTime = new Date();
+                    reminderTime.setHours(hours, minutes, 0, 0);
+                    
+                    if (reminderTime > now) {
+                        allReminders.push({
+                            id: task.id,
+                            title: task.text,
+                            time: reminderTime,
+                            type: 'daily'
+                        });
+                    }
+                }
+            });
+            
+            // Process weekly tasks
+            state.tasks.weekly.forEach(task => {
+                if (task.reminder && !task.completed) {
+                    const [hours, minutes] = task.reminder.time.split(':').map(Number);
+                    const today = new Date();
+                    const dayOfWeek = today.getDay();
+                    const daysUntil = (task.reminder.day - dayOfWeek + 7) % 7;
+                    const reminderDate = new Date(today);
+                    reminderDate.setDate(today.getDate() + daysUntil);
+                    reminderDate.setHours(hours, minutes, 0, 0);
+                    
+                    if (reminderDate > now) {
+                        allReminders.push({
+                            id: task.id,
+                            title: task.text,
+                            time: reminderDate,
+                            type: 'weekly'
+                        });
+                    }
+                }
+            });
+            
+            // Process monthly tasks
+            state.tasks.monthly.forEach(task => {
+                if (task.reminder && !task.completed) {
+                    const [hours, minutes] = task.reminder.time.split(':').map(Number);
+                    const today = new Date();
+                    const reminderDate = new Date(today.getFullYear(), today.getMonth(), task.reminder.date, hours, minutes);
+                    
+                    // If date has already passed this month, set to next month
+                    if (reminderDate < today) {
+                        reminderDate.setMonth(reminderDate.getMonth() + 1);
+                    }
+                    
+                    if (reminderDate > now) {
+                        allReminders.push({
+                            id: task.id,
+                            title: task.text,
+                            time: reminderDate,
+                            type: 'monthly'
+                        });
+                    }
+                }
+            });
+            
+            // Sort reminders by time
+            allReminders.sort((a, b) => a.time - b.time);
+            
+            // Display reminders
+            if (allReminders.length === 0) {
+                container.innerHTML = `
+                    <div class="text-center py-10 text-cream-400">
+                        <i class="fas fa-bell-slash text-3xl mb-3"></i>
+                        <p>No upcoming reminders</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            // Show only the next 5 reminders
+            const remindersToShow = allReminders.slice(0, 5);
+            
+            remindersToShow.forEach(reminder => {
+                const reminderElement = document.createElement('div');
+                reminderElement.className = 'reminder-item';
+                reminderElement.innerHTML = `
+                    <div class="reminder-icon">
+                        <i class="fas fa-bell"></i>
+                    </div>
+                    <div class="reminder-content">
+                        <div class="reminder-title">${reminder.title}</div>
+                        <div class="reminder-time-display">
+                            ${reminder.time.toLocaleDateString()} at ${reminder.time.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}
+                        </div>
+                    </div>
+                    <div class="reminder-actions">
+                        <span class="action-btn delete-btn" data-id="${reminder.id}">
+                            <i class="fas fa-trash"></i>
+                        </span>
+                    </div>
+                `;
+                
+                // Delete button event
+                const deleteBtn = reminderElement.querySelector('.delete-btn');
+                deleteBtn.addEventListener('click', function() {
+                    // Find task and remove reminder
+                    const taskTypes = ['daily', 'weekly', 'monthly'];
+                    for (const type of taskTypes) {
+                        const task = state.tasks[type].find(t => t.id === reminder.id);
+                        if (task) {
+                            task.reminder = null;
+                            saveData();
+                            renderTasksForView(type);
+                            renderUpcomingReminders();
+                            showNotification('Reminder deleted!');
+                            break;
+                        }
+                    }
+                });
+                
+                container.appendChild(reminderElement);
             });
         }
         
@@ -2804,13 +3276,7 @@
                 if (task.reminder && !task.completed) {
                     const [hours, minutes] = task.reminder.split(':').map(Number);
                     if (currentHour === hours && currentMinute === minutes) {
-                        showNotification(`Reminder: "${task.text}" is due now!`);
-                        // Animate bell
-                        const bell = document.querySelector(`.reminder-bell[data-id="${task.id}"]`);
-                        if (bell) {
-                            bell.classList.add('reminder-active');
-                            setTimeout(() => bell.classList.remove('reminder-active'), 2000);
-                        }
+                        triggerReminderNotification(task);
                     }
                 }
             });
@@ -2820,13 +3286,7 @@
                 if (task.reminder && !task.completed && currentDay === task.reminder.day) {
                     const [hours, minutes] = task.reminder.time.split(':').map(Number);
                     if (currentHour === hours && currentMinute === minutes) {
-                        showNotification(`Reminder: "${task.text}" is due now!`);
-                        // Animate bell
-                        const bell = document.querySelector(`.reminder-bell[data-id="${task.id}"]`);
-                        if (bell) {
-                            bell.classList.add('reminder-active');
-                            setTimeout(() => bell.classList.remove('reminder-active'), 2000);
-                        }
+                        triggerReminderNotification(task);
                     }
                 }
             });
@@ -2836,16 +3296,35 @@
                 if (task.reminder && !task.completed && currentDate === task.reminder.date) {
                     const [hours, minutes] = task.reminder.time.split(':').map(Number);
                     if (currentHour === hours && currentMinute === minutes) {
-                        showNotification(`Reminder: "${task.text}" is due now!`);
-                        // Animate bell
-                        const bell = document.querySelector(`.reminder-bell[data-id="${task.id}"]`);
-                        if (bell) {
-                            bell.classList.add('reminder-active');
-                            setTimeout(() => bell.classList.remove('reminder-active'), 2000);
-                        }
+                        triggerReminderNotification(task);
                     }
                 }
             });
+        }
+        
+        function triggerReminderNotification(task) {
+            // Show system notification
+            if (Notification.permission === 'granted') {
+                new Notification(`Reminder: ${task.text}`, {
+                    body: 'It\'s time for your task!',
+                    icon: '/favicon.ico'
+                });
+            }
+            
+            // Show in-app notification
+            const notification = document.getElementById('systemNotification');
+            const title = document.getElementById('notificationTitle');
+            const text = document.getElementById('notificationText');
+            
+            title.textContent = 'Task Reminder';
+            text.textContent = task.text;
+            
+            notification.classList.add('show');
+            
+            // Auto-hide after 5 seconds
+            setTimeout(() => {
+                notification.classList.remove('show');
+            }, 5000);
         }
         
         function saveFinancialNotes() {
@@ -2883,6 +3362,12 @@
             document.getElementById('photoInput').addEventListener('change', function(e) {
                 const file = e.target.files[0];
                 if (file) {
+                    // Check file size (max 2MB)
+                    if (file.size > 2 * 1024 * 1024) {
+                        showNotification('Image too large. Max 2MB allowed.');
+                        return;
+                    }
+                    
                     const reader = new FileReader();
                     reader.onload = function(e) {
                         const preview = document.getElementById('photoPreview');
@@ -3016,6 +3501,10 @@
         
         document.getElementById('closeModal').addEventListener('click', function() {
             document.getElementById('financialModal').style.display = 'none';
+        });
+        
+        document.getElementById('closeNotification').addEventListener('click', function() {
+            document.getElementById('systemNotification').classList.remove('show');
         });
         
         function initHabitDashboard() {
@@ -3208,6 +3697,104 @@
             setTimeout(() => {
                 notification.classList.remove('show');
             }, 3000);
+        }
+        
+        // Login functionality
+        function setupLogin() {
+            const loginModal = document.getElementById('loginModal');
+            const closeLoginModal = document.getElementById('closeLoginModal');
+            const loginBtn = document.getElementById('loginBtn');
+            const signupBtn = document.getElementById('signupBtn');
+            const switchToSignup = document.getElementById('switchToSignup');
+            const switchToLogin = document.getElementById('switchToLogin');
+            const loginTabs = document.querySelectorAll('.login-tab');
+            
+            // Open login modal when profile circle is clicked
+            document.getElementById('profileCircle').addEventListener('click', function() {
+                loginModal.style.display = 'flex';
+            });
+            
+            // Close login modal
+            closeLoginModal.addEventListener('click', function() {
+                loginModal.style.display = 'none';
+            });
+            
+            // Switch between login/signup tabs
+            loginTabs.forEach(tab => {
+                tab.addEventListener('click', function() {
+                    loginTabs.forEach(t => t.classList.remove('active'));
+                    this.classList.add('active');
+                    
+                    if (this.dataset.tab === 'login') {
+                        document.getElementById('loginForm').classList.add('active');
+                        document.getElementById('signupForm').classList.remove('active');
+                    } else {
+                        document.getElementById('signupForm').classList.add('active');
+                        document.getElementById('loginForm').classList.remove('active');
+                    }
+                });
+            });
+            
+            // Switch to signup form
+            switchToSignup.addEventListener('click', function(e) {
+                e.preventDefault();
+                document.querySelector('.login-tab[data-tab="signup"]').click();
+            });
+            
+            // Switch to login form
+            switchToLogin.addEventListener('click', function(e) {
+                e.preventDefault();
+                document.querySelector('.login-tab[data-tab="login"]').click();
+            });
+            
+            // Login button
+            loginBtn.addEventListener('click', function() {
+                const username = document.getElementById('loginUsername').value;
+                const password = document.getElementById('loginPassword').value;
+                
+                if (username && password) {
+                    // In a real app, this would authenticate with a server
+                    currentUser = {
+                        username: username,
+                        avatar: null
+                    };
+                    localStorage.setItem('litheUser', JSON.stringify(currentUser));
+                    loginModal.style.display = 'none';
+                    loadProfileImage();
+                    showNotification(`Welcome back, ${username}!`);
+                } else {
+                    showNotification('Please enter both username and password');
+                }
+            });
+            
+            // Signup button
+            signupBtn.addEventListener('click', function() {
+                const username = document.getElementById('signupUsername').value;
+                const email = document.getElementById('signupEmail').value;
+                const password = document.getElementById('signupPassword').value;
+                const confirmPassword = document.getElementById('signupConfirmPassword').value;
+                
+                if (!username || !password) {
+                    showNotification('Username and password are required');
+                    return;
+                }
+                
+                if (password !== confirmPassword) {
+                    showNotification('Passwords do not match');
+                    return;
+                }
+                
+                // In a real app, this would create a new user
+                currentUser = {
+                    username: username,
+                    email: email,
+                    avatar: null
+                };
+                localStorage.setItem('litheUser', JSON.stringify(currentUser));
+                loginModal.style.display = 'none';
+                loadProfileImage();
+                showNotification(`Welcome to Lithe, ${username}!`);
+            });
         }
         
         document.addEventListener('DOMContentLoaded', function() {
