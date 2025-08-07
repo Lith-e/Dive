@@ -1762,7 +1762,7 @@
     
     <div id="notification" class="notification">
         <i class="fas fa-check-circle mr-2"></i>
-        <span id="notificationMessage">Habit updated successfully!</span>
+        <span id="notificationMessage">K.O.</span>
     </div>
     
     <!-- System Notification -->
@@ -1780,37 +1780,40 @@
     </div>
 
     <!-- Login Modal -->
-    <div class="login-modal" id="loginModal">
-        <div class="login-content">
-            <span class="close-modal" id="closeLoginModal">&times;</span>
-            <h2 class="login-header">Welcome to Lithe</h2>
-            
-            <div class="login-tabs">
-                <div class="login-tab active" data-tab="login">Login</div>
-                <div class="login-tab" data-tab="signup">Sign Up</div>
+  <div class="login-modal" id="loginModal">
+    <div class="login-content">
+        <span class="close-modal" id="closeLoginModal">&times;</span>
+        <h2 class="login-header">Welcome to Dive</h2>
+
+        <div class="login-tabs">
+            <div class="login-tab active" data-tab="login">Login</div>
+            <div class="login-tab" data-tab="signup">Sign Up</div>
+        </div>
+
+        <!-- Login Form -->
+        <div id="loginForm" class="login-form active">
+            <input type="text" id="loginUsername" class="login-input" placeholder="Username">
+            <input type="password" id="loginPassword" class="login-input" placeholder="Password">
+            <button class="login-btn" id="loginBtn">Log In</button>
+            <div class="login-footer">
+                Don't have an account? <a href="#" id="switchToSignup">Sign Up</a>
             </div>
-            
-            <div id="loginForm" class="login-form active">
-                <input type="text" id="loginUsername" class="login-input" placeholder="Username">
-                <input type="password" id="loginPassword" class="login-input" placeholder="Password">
-                <button class="login-btn" id="loginBtn">Log In</button>
-                <div class="login-footer">
-                    Don't have an account? <a href="#" id="switchToSignup">Sign Up</a>
-                </div>
-            </div>
-            
-            <div id="signupForm" class="login-form">
-                <input type="text" id="signupUsername" class="login-input" placeholder="Username">
-                <input type="email" id="signupEmail" class="login-input" placeholder="Email">
-                <input type="password" id="signupPassword" class="login-input" placeholder="Password">
-                <input type="password" id="signupConfirmPassword" class="login-input" placeholder="Confirm Password">
-                <button class="login-btn" id="signupBtn">Create Account</button>
-                <div class="login-footer">
-                    Already have an account? <a href="#" id="switchToLogin">Log In</a>
-                </div>
+        </div>
+
+        <!-- Signup Form -->
+        <div id="signupForm" class="login-form">
+            <input type="text" id="signupUsername" class="login-input" placeholder="Username">
+            <input type="email" id="signupEmail" class="login-input" placeholder="Email">
+            <input type="password" id="signupPassword" class="login-input" placeholder="Password">
+            <input type="password" id="signupConfirmPassword" class="login-input" placeholder="Confirm Password">
+            <button class="login-btn" id="signupBtn">Create Account</button>
+            <div class="login-footer">
+                Already have an account? <a href="#" id="switchToLogin">Log In</a>
             </div>
         </div>
     </div>
+</div>
+
 
     <!-- Financial Goals Modal -->
     <div class="modal" id="financialModal">
@@ -2236,6 +2239,31 @@
             },
             reminders: []
         };
+        
+    document.getElementById("switchToSignup").addEventListener("click", function () {
+        document.getElementById("loginForm").classList.remove("active");
+        document.getElementById("signupForm").classList.add("active");
+    });
+
+    document.getElementById("switchToLogin").addEventListener("click", function () {
+        document.getElementById("signupForm").classList.remove("active");
+        document.getElementById("loginForm").classList.add("active");
+    });
+
+    // Redirect to profile.html on login
+    document.getElementById("loginBtn").addEventListener("click", function () {
+        const username = document.getElementById("loginUsername").value;
+        const password = document.getElementById("loginPassword").value;
+
+        // Basic validation (you can replace this with real auth logic)
+        if (username.trim() !== "" && password.trim() !== "") {
+            window.location.href = "profile.html";
+        } else {
+            alert("Please enter both username and password.");
+        }
+    });
+
+
         
         // Financial data
         let financialGoals = [];
@@ -3803,3 +3831,4 @@
     </script>
 </body>
 </html>
+
