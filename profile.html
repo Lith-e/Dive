@@ -49,14 +49,6 @@
         .font-serif {
             font-family: 'Playfair Display', serif;
         }
-        .logo-icon {
-            width: 28px;
-            height: 28px;
-            object-fit: contain;
-            margin-right: 8px;
-            vertical-align: middle;
-        }  
-
         
         .container {
             max-width: 1200px;
@@ -64,7 +56,7 @@
             padding: 0 20px;
         }
         
-        /* Header Styles - Fixed spacing issue */
+        /* Header Styles */
         header {
             position: fixed;
             top: 0;
@@ -88,13 +80,13 @@
             justify-content: space-between;
             align-items: center;
             width: 100%;
-            padding: 0 2.5rem; /* Increased padding for better spacing */
+            padding: 0 2.5rem;
         }
         
         .logo-container {
             display: flex;
             align-items: center;
-            gap: 1rem; /* Added gap between logo elements */
+            gap: 1rem;
         }
         
         .coral-icon {
@@ -667,7 +659,7 @@
             }
             
             .header-content {
-                padding: 0 1.5rem; /* Adjust for mobile */
+                padding: 0 1.5rem;
             }
         }
     </style>
@@ -684,13 +676,13 @@
         <span id="notificationMessage">Profile updated successfully!</span>
     </div>
     
-    <!-- Header with fixed spacing -->
+    <!-- Header -->
     <header>
         <div class="container">
             <div class="header-content">
                 <div class="logo-container">
-                    <img src="logo.png" class="logo-icon" />
-                    <div class="app-name">Dive</div>
+                    <i class="fas fa-water coral-icon"></i>
+                    <div class="app-name">Lithe</div>
                 </div>
                 
                 <div class="profile-circle" id="profileCircle">
@@ -923,7 +915,6 @@
         </div>
     </div>
     
-  
     <script>
         // App state
         let currentUser = null;
@@ -950,7 +941,6 @@
         const loginUsername = document.getElementById('loginUsername');
         const loginPassword = document.getElementById('loginPassword');
         const signupUsername = document.getElementById('signupUsername');
-        const signupEmail = document.getElementById('signupEmail');
         const signupPassword = document.getElementById('signupPassword');
         const signupConfirmPassword = document.getElementById('signupConfirmPassword');
         const displayName = document.getElementById('displayName');
@@ -959,27 +949,28 @@
         
         // Initialize the app
         function initApp() {
-            // Initialize users storage if doesn't exist
+            // Initialize users storage
             if (!localStorage.getItem('litheUsers')) {
                 localStorage.setItem('litheUsers', JSON.stringify([]));
             }
             
             // Load user data from localStorage
-            loadUserData();
+            const savedUser = localStorage.getItem('litheUser');
+            if (savedUser) {
+                currentUser = JSON.parse(savedUser);
+                // Apply saved theme
+                if (currentUser.theme === 'dark') {
+                    document.body.classList.add('dark-mode');
+                    themeIcon.classList.remove('fa-moon');
+                    themeIcon.classList.add('fa-sun');
+                }
+            }
             
             // Set up event listeners
             setupEventListeners();
             
             // Update UI based on user state
             updateUI();
-        }
-        
-        // Load user data from localStorage
-        function loadUserData() {
-            const savedUser = localStorage.getItem('litheUser');
-            if (savedUser) {
-                currentUser = JSON.parse(savedUser);
-            }
         }
         
         // Save user data to localStorage
@@ -993,6 +984,9 @@
                 const index = users.findIndex(u => u.id === currentUser.id);
                 if (index !== -1) {
                     users[index] = currentUser;
+                    localStorage.setItem('litheUsers', JSON.stringify(users));
+                } else {
+                    users.push(currentUser);
                     localStorage.setItem('litheUsers', JSON.stringify(users));
                 }
             }
@@ -1102,9 +1096,6 @@
                     updateUI();
                     showNotification('Profile picture updated!');
                     closeModal(avatarModal);
-                    
-                    // Notify other tabs
-                    window.dispatchEvent(new Event('storage'));
                 } else {
                     showNotification('Please select an image first');
                 }
@@ -1146,24 +1137,24 @@
                 return;
             }
             
-            // Simulate API call to authenticate user
-            authenticateUser(username, password)
-                .then(user => {
-                    currentUser = user;
-                    saveUserData();
-                    updateUI();
-                    closeModal(loginModal);
-                    showNotification(`Welcome back, ${user.username}!`);
-                })
-                .catch(error => {
-                    showNotification(error.message || 'Login failed');
-                });
+            // Authenticate user
+            const users = JSON.parse(localStorage.getItem('litheUsers') || '[]');
+            const user = users.find(u => u.username === username && u.password === password);
+            
+            if (user) {
+                currentUser = user;
+                saveUserData();
+                updateUI();
+                closeModal(loginModal);
+                showNotification(`Welcome back, ${user.username}!`);
+            } else {
+                showNotification('Invalid username or password');
+            }
         }
         
         // Signup function
         function signup() {
             const username = signupUsername.value;
-            const email = signupEmail.value;
             const password = signupPassword.value;
             const confirmPassword = signupConfirmPassword.value;
             
@@ -1181,8 +1172,7 @@
             const newUser = {
                 id: Date.now().toString(),
                 username,
-                email,
-                password, // In a real app, this would be hashed
+                password,
                 createdAt: new Date().toISOString(),
                 displayName: username,
                 bio: '',
@@ -1198,18 +1188,23 @@
                 connectionsCount: 0
             };
             
-            // Simulate API call to create user
-            createUser(newUser)
-                .then(user => {
-                    currentUser = user;
-                    saveUserData();
-                    updateUI();
-                    closeModal(loginModal);
-                    showNotification(`Welcome to Lithe, ${user.username}!`);
-                })
-                .catch(error => {
-                    showNotification(error.message || 'Signup failed');
-                });
+            // Check if username already exists
+            const users = JSON.parse(localStorage.getItem('litheUsers') || '[]');
+            if (users.some(u => u.username === username)) {
+                showNotification('Username already exists');
+                return;
+            }
+            
+            // Add new user
+            users.push(newUser);
+            localStorage.setItem('litheUsers', JSON.stringify(users));
+            
+            currentUser = newUser;
+            localStorage.setItem('litheUser', JSON.stringify(newUser));
+            
+            updateUI();
+            closeModal(loginModal);
+            showNotification(`Welcome to Lithe, ${newUser.username}!`);
         }
         
         // Logout function
@@ -1285,48 +1280,6 @@
             setTimeout(() => {
                 notification.classList.remove('show');
             }, 3000);
-        }
-        
-        // Simulated API Functions
-        
-        // Simulated API call to authenticate user
-        function authenticateUser(username, password) {
-            return new Promise((resolve, reject) => {
-                // Simulate API request delay
-                setTimeout(() => {
-                    const users = JSON.parse(localStorage.getItem('litheUsers') || '[]');
-                    const user = users.find(u => u.username === username && u.password === password);
-                    
-                    if (user) {
-                        resolve(user);
-                    } else {
-                        reject(new Error('Invalid username or password'));
-                    }
-                }, 500);
-            });
-        }
-        
-        // Simulated API call to create user
-        function createUser(newUser) {
-            return new Promise((resolve, reject) => {
-                // Simulate API request delay
-                setTimeout(() => {
-                    const users = JSON.parse(localStorage.getItem('litheUsers') || '[]');
-                    
-                    // Check if username already exists
-                    if (users.some(u => u.username === newUser.username)) {
-                        reject(new Error('Username already exists'));
-                        return;
-                    }
-                    
-                    // Add new user
-                    users.push(newUser);
-                    localStorage.setItem('litheUsers', JSON.stringify(users));
-                    localStorage.setItem('litheUser', JSON.stringify(newUser));
-                    
-                    resolve(newUser);
-                }, 500);
-            });
         }
         
         // Initialize the app when DOM is loaded
